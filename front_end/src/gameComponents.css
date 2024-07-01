@@ -1,0 +1,14 @@
+:root {
+    --lineSize: 10%
+}
+
+.Tile {
+    background-color: white;
+}
+
+.Board {
+    display: grid;
+    background-color: black;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+}
