@@ -1,7 +1,7 @@
 To run the aplication:
 
 `cd front_end`
-`npm intall`
-`npm run`
+`npm install`
+`npm start`
 
 Only install first time.
