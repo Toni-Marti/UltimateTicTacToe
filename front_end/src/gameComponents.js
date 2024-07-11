@@ -1,48 +1,51 @@
 import { useState } from "react";
-import { MARK, Board } from "./gameLogic";
+import { MARK, Tile, Board, Game } from "./gameLogic";
 import "./gameComponents.css";
 
-const lineSize = 0.04
-const tileSize = (1 - 2 * lineSize) / 3;
+function TileR({tile, mark_function, address, className = ""}) {
+    return (
+        tile.value === MARK.X ?
+        <div style={{background:"#FF00F0"}} className={"Tile " + className} onClick={() => mark_function(address)} /> :
+        tile.value === MARK.O ?
+        <div style={{background:"blue"}} className={"Tile " + className} onClick={() => mark_function(address)} /> :
+        <div     className={"Tile " + className} onClick={() => mark_function(address)} />
 
-document.documentElement.style.setProperty('--lineSize', (lineSize * 100).toString + "%");
+    );
+}
 
-// TODO refactor props
-// TODO refactor state
+function BoardR({board, mark_function, address = "", className = ""}) {
+    return (
+        <div className={"Board " + className}>
+            {board.tiles.map((tile, index) => {
+                let tile_address = address + (index + 1);
+                return (tile instanceof Board
+                    ? <BoardR board={tile} mark_function={mark_function} address={tile_address} className={"GridItem" + (index+1)} key={tile_address} />
+                    : <TileR tile={tile} mark_function={mark_function} address={tile_address} className={"GridItem" + (index+1)} key={tile_address} />)
+            })}
+            <div className="Line Line1"></div>
+            <div className="Line Line2"></div>
+            <div className="Line Line3"></div>
+            <div className="Line Line4"></div>
+        </div>
+    );
+}
 
-function TileR(props) {
-    const [value, setValue] = useState(props.tile.value);
-    const markTile = () => {
-        props.tile.value = props.game.currentPlayer;
-        setValue(props.tile.value);
-        props.game.currentPlayer = props.game.currentPlayer === MARK.X ? MARK.O : MARK.X;
+function GameR({size = [500, 500]}) {
+    // const [gameSt, setGameSt] = useState(new Game(new Board(Array.from({ length: 6 }, () => new Board()))));
+    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()])));
+
+    function markTile(address) {
+            let newGameSt = Game.clone(gameSt); 
+            newGameSt.markTile(address);
+            setGameSt(newGameSt); 
     }
 
-
-    return (
-        <div className="Tile" style={{ width: props.size + 'px', height: props.size + 'px' }} onClick={markTile}>
-            {value === MARK.X ? 'X' : value === MARK.O ? 'O' : ''}
-        </div>
-    );
-}
-
-function BoardR(props) {
-    return (
-        <div className="Board" style={{ width: props.size + 'px', height: props.size + 'px', gap: props.size * lineSize + 'px ' + props.size * lineSize + 'px' }}>
-            {props.board.tiles.map((tile, index) => {
-                return (tile instanceof Board
-                    ? <BoardR board={tile} key={index} game={props.game} size={props.size * tileSize} />
-                    : <TileR tile={tile} key={index} game={props.game} size={props.size * tileSize} />)
-            })}
-        </div>
-    );
-}
-
-function GameR(props) {
     return (
         <div className="Game">
-            <p>{props.game.player1} vs {props.game.player2}</p>
-            <BoardR board={props.game.mainBoard} game={props.game} size={props.boardSize} />
+            <p>{gameSt.player1} vs {gameSt.player2}</p>
+            <div className="MainBoard" style={{width: size[0] + "px", height: size[1] + "px"}}>
+                <BoardR board={gameSt.mainBoard} mark_function={markTile} />
+            </div>
         </div>
     );
 }
