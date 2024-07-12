@@ -1,100 +1,125 @@
-/* Lobby.css */
+/* Lobby */
 .lobby-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-left: 30px;
-    min-height: 100vh;
-  }
-  
-  .lobby-box {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 40px;
-    max-width: 600px;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .player-block {
-    display: block;
-    width: 100%;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
-    padding: 20px;
-    text-align: center;
-    text-decoration: none;
-    transition: transform 0.3s, background-color 0.3s;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .player-block:hover {
-    transform: translateY(-5px);
-    background-color: #e0e0e0;
-  }
-  
-  .player-block h2 {
-    margin: 0 0 10px;
-    font-size: 1.5em;
-  }
-  
-  .player-block p {
-    margin: 0;
-    color: #555;
-  }
-  
-  .join-message {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
-  
-  .message-box {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-  }
-  
-  .message-box p {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-  }
-  
-  .join-button {
-    padding: 10px 20px;
-    margin: 0 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .no-button {
-    background-color: #dc3545;
-    color: #fff;
-  }
-  
-  .yes-button {
-    background-color: #09b71d;
-    color: #fff;
-  }
-  
-  .join-button:hover {
-    opacity: 0.8;
-  }
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+  min-height: 100vh;
+}
+
+.lobby-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.player-block {
+  display: block;
+  width: 100%;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.3s, background-color 0.3s;
+  cursor: pointer;
+  border: none;
+}
+
+.player-block:hover {
+  transform: translateY(-5px);
+  background-color: #e0e0e0;
+}
+
+.player-block h2 {
+  margin: 0 0 10px;
+  font-size: 1.5em;
+}
+
+.player-block p {
+  margin: 0;
+  color: #555;
+}
+
+.join-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.message-box {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.message-box p {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.join-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.no-button {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.yes-button {
+  background-color: #09b71d;
+  color: #fff;
+}
+
+.join-button:hover {
+  opacity: 0.8;
+}
+
+/* Chat */
+.chat-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.chat-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  width: 300px;
+  height: 400px;
+  margin-top: 200px;
+}
