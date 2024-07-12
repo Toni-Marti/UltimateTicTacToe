@@ -6,6 +6,9 @@ const MARK = Object.freeze({
     OX: 4,
 });
 
+const winningCombinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontal 
+                             [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertical
+                             [0, 4, 8], [2, 4, 6]]            // diagonal
 
 
 class Tile {
@@ -21,6 +24,10 @@ class Tile {
         this.value = mark;
     }
 
+    firstMark() {
+        return this.value;
+    }
+
     hasRoom() {
         return this.value === MARK.NONE;
     }
@@ -29,12 +36,11 @@ class Tile {
 
 
 class Board extends Tile {
-    static #winningCombinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontal 
-                                   [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertical
-                                   [0, 4, 8], [2, 4, 6]]            // diagonal
-
-    constructor(tiles = []) {
+    constructor(tiles = [], more_than_one_mark = true) {
         super();
+
+        this.more_than_one_mark = more_than_one_mark;
+        this.first_lines_indexes = [];
 
         this.tiles = [];
 
@@ -61,6 +67,9 @@ class Board extends Tile {
             }
         });
 
+        newBoard.more_than_one_mark = board_instance.more_than_one_mark;
+        newBoard.first_lines_indexes = board_instance.first_lines_indexes;
+
         newBoard.value = board_instance.value;
 
         return newBoard;
@@ -71,7 +80,7 @@ class Board extends Tile {
         this.#updateValue();
     }
 
-    fistMark() {
+    firstMark() {
         if ([MARK.X, MARK.XO].includes(this.value)) {
             return MARK.X;
         }
@@ -92,16 +101,33 @@ class Board extends Tile {
         return false;
     }
 
+    setMoreThanOneMarkRecursive(more_than_one_mark) {
+        this.more_than_one_mark = more_than_one_mark;
+
+        for (let i = 0; i < this.tiles.length; i++) {
+            if (this.tiles[i] instanceof Board) {
+                this.tiles[i].setMoreThanOneMarkRecursive(more_than_one_mark);
+            }
+        }
+    }
+
     #updateValue() {
+        // This two conditionas are for optimization, if a versioin of the game
+        // allows for the markes to change, then they must be removed
         if ([MARK.XO, MARK.OX].includes(this.value)) {
+            return;
+        }
+        if (!this.more_than_one_mark && this.value !== MARK.NONE) {
             return;
         }
 
         let present_marks = new Set();
-        for (let i = 0; i < Board.#winningCombinations.length; i++) {
-            let current_combination = Board.#winningCombinations[i];
+        let line_indexes = [];
+        for (let i = 0; i < winningCombinations.length; i++) {
+            let current_combination = winningCombinations[i];
             
             let line_mark = this.tiles[current_combination[0]].value;
+            
             for (let j = 1; j < current_combination.length; j++) {
                 if(line_mark === MARK.NONE || present_marks.has(line_mark)) {
                     break;
@@ -129,10 +155,18 @@ class Board extends Tile {
                 present_marks.add(MARK.O);
             }
 
+            if (line_mark !== MARK.NONE) {
+                line_indexes = [...line_indexes, i];
+            }
+
             if (present_marks.size === 2) {
                 break;
             }
         }
+
+        this.first_lines_indexes = this.first_lines_indexes.length === 0 
+                                   ? line_indexes
+                                   : this.first_lines_indexes;
 
         if (this.value === MARK.NONE) {
             if (present_marks.size === 2) {
@@ -156,11 +190,13 @@ class Board extends Tile {
 }
 
 
-
+// TODO: could be added a rule that sums the number of lines of each player and 
+// only the one with the most lines wins, a second rule can come in hand with that one
+// if they have more than one line each, and it is a draw, then should it be XO/OX or NONE?
 class Rules {
-    constructor() {
-        this.keepPlacingInBoardAfterItIsMarked = true;
-        this.boardCanHaveMultipleMarks = true;
+    constructor(keepPlacingInBoardAfterItIsMarked = true, boardCanHaveMultipleMarks = true) {
+        this.keepPlacingInBoardAfterItIsMarked = keepPlacingInBoardAfterItIsMarked;
+        this.boardCanHaveMultipleMarks = boardCanHaveMultipleMarks;
     }
 
     static clone(rules_instance) {
@@ -175,8 +211,9 @@ class Rules {
 
 
 class Game {
-    constructor(board = new Board(), player1 = "Player1", player2 = "Player2", rules = new Rules()) {
+    constructor(board = new Board(), rules = new Rules(), player1 = "Player1", player2 = "Player2") {
         this.mainBoard = Board.clone(board);
+        this.mainBoard.setMoreThanOneMarkRecursive(rules.boardCanHaveMultipleMarks);
         this.currentPlayer = MARK.X;
         this.nextMoveBoardAddress = "";
 
@@ -187,7 +224,7 @@ class Game {
     }
 
     static clone(game_instance) {
-        let newGame = new Game(game_instance.mainBoard, game_instance.player1, game_instance.player2, game_instance.rules);
+        let newGame = new Game(game_instance.mainBoard, game_instance.rules, game_instance.player1, game_instance.player2);
         newGame.currentPlayer = game_instance.currentPlayer;
         newGame.nextMoveBoardAddress = game_instance.nextMoveBoardAddress;
 
@@ -208,21 +245,21 @@ class Game {
     */
     markTile(tile_address) {
         
-        if (!this.#canClickOn(tile_address)) {
-            return;
+        if (!this.canClickOn(tile_address)) {
+            return false;
         }
-        console.log("clicking on " + tile_address); 
 
         this.mainBoard.markTile(this.currentPlayer, tile_address);
         this.currentPlayer = this.currentPlayer === MARK.X ? MARK.O : MARK.X;   
         this.#updateNextMoveBoardAddress(tile_address);
+        return true;
     }
 
     getWinner() {
         this.mainBoard.fistMark();
     }
     
-    #getTile(address) {
+    getTile(address) {
         if (address === "") {
             return this.mainBoard;
         }
@@ -235,44 +272,95 @@ class Game {
         return currentBoard;
     }
 
-    #canClickOn(tile_address) {
-        let validBoard;
-        if (this.nextMoveBoardAddress === "") {
-            validBoard = true;
+    getValue(address) {
+        let val;
+        if (this.rules.boardCanHaveMultipleMarks) {
+            val = this.getTile(address).value;
+        } else {
+            val = this.getTile(address).firstMark();
+        }
+
+        if (val === null) {
+            return MARK.NONE;
         }
         else {
-            validBoard = this.nextMoveBoardAddress === tile_address.slice(0, this.nextMoveBoardAddress.length);
+            return val;
         }
+    }
 
-        if (!validBoard) {
+    isPartOfValidLine(address) {
+        if (address === "") {
             return false;
         }
+        
+        let parent_address = address.slice(0, -1);
+        let index_in_board = (+address.slice(-1))-1;
 
-        return this.#getTile(tile_address).value === MARK.NONE;
+        for(let i = 0; i < winningCombinations.length; i++) {
+            let checking_comb = winningCombinations[i];
+            
+            if(!checking_comb.includes(index_in_board)) {
+                continue;
+            }
+            else {
+            }
+
+            let line_value = this.getValue(parent_address+(checking_comb[0]+1));
+            for (let j = 1; j < checking_comb.length; j++) {
+                let curr_value = this.getValue(parent_address+(checking_comb[j]+1));
+                if ([MARK.XO, MARK.OX].includes(line_value)) {
+                    line_value = curr_value;
+                }
+                else if(line_value !== curr_value) {
+                    line_value = MARK.NONE;
+                    break;
+                }
+            }
+
+            if (line_value !== MARK.NONE) {
+                if(this.rules.boardCanHaveMultipleMarks) {
+                    return true;
+                }
+                else if (this.getTile(parent_address).first_lines_indexes.includes(i)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    canClickOn(address) {
+        let tile = this.getTile(address);
+        let not_contained_in_next_move = this.nextMoveBoardAddress.slice(0, address.length) !== address.slice(0, this.nextMoveBoardAddress.length);
+        let mark_rule_part = !this.rules.keepPlacingInBoardAfterItIsMarked && this.getValue(address) !== MARK.NONE;
+        let is_full = !tile.hasRoom();
+
+        if (not_contained_in_next_move || mark_rule_part || is_full) {
+            return false; 
+        }
+
+        return true;
     }
 
     #updateNextMoveBoardAddress(address_of_tile_clicked) {
         let next_address = address_of_tile_clicked.slice(0, -2);
-        
-        if (address_of_tile_clicked.length > 1) {
-            next_address += address_of_tile_clicked.slice(-1);
-        }
+        next_address += address_of_tile_clicked.slice(-1);
 
         if (!this.rules.keepPlacingInBoardAfterItIsMarked) {
-            while(next_address !== "" && this.#getTile(next_address).value !== MARK.NONE) {
+            while(next_address !== "" && this.getValue(next_address) !== MARK.NONE) {
                 next_address = next_address.slice(0, -1);
             }
         }
 
-        while(next_address !== "" && !this.#getTile(next_address).hasRoom()) {
+        while(next_address !== "" && !this.getTile(next_address).hasRoom()) {
             next_address = next_address.slice(0, -1);
         }
 
-        console.log("next address: " + next_address);
         this.nextMoveBoardAddress = next_address;
     }
 }
 
 
 
-export { MARK, Tile, Board, Game };
+export { MARK, Tile, Board, Rules, Game };
