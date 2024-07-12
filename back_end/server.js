@@ -13,17 +13,19 @@ io.on('connection', socket =>{
     console.log('Connected')
 
     socket.on('findRoom', mydata => {
-        console.log('Server received: ', mydata)
+        console.log('This user was added to a room: ', mydata)
         roomNumber = roomNumber+1;
         rooms.push(roomNumber);
         io.emit('findRoom', roomNumber)
+
+        subscribeToRoom(roomNumber);
     })
 
-    for (var i=0; i<rooms.length; i++){
-        socket.on(rooms[i], mydata => {
-            console.log('Server received data from: ', mydata)
-            io.emit(rooms[i], mydata)
-        })
+    function subscribeToRoom(roomNumber) {
+        socket.on(roomNumber, mydata => {
+            console.log('Server received an event from: ', mydata.username);
+            io.emit(roomNumber, mydata);
+        });
     }
 })
 
