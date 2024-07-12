@@ -7,22 +7,22 @@ const io = require('socket.io')(server,{
 // We log the messages and users received in the
 // console and broadcast them
 io.on('connection', socket =>{
-    let roomCounter = 0;
-    let rooms = [];
+    let roomNumber = 0;
+    let rooms = [1, 2,3,4,5,6];
 
     console.log('Connected')
 
     socket.on('findRoom', mydata => {
         console.log('Server received: ', mydata)
-        roomCounter = roomCounter+1;
-        rooms.push(roomCounter);
-        io.emit('findRoom', roomCounter)
+        roomNumber = roomNumber+1;
+        rooms.push(roomNumber);
+        io.emit('findRoom', roomNumber)
     })
 
     for (var i=0; i<rooms.length; i++){
-        socket.on(room[i], mydata => {
+        socket.on(rooms[i], mydata => {
             console.log('Server received data from: ', mydata)
-            io.emit('msg', mydata)
+            io.emit(rooms[i], mydata)
         })
     }
 })
