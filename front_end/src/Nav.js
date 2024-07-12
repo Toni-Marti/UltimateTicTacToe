@@ -10,6 +10,7 @@ function Nav() {
         <li><Link to="/Game">GameR</Link></li>
         <li><Link to="/Login">Login</Link></li>
         <li><Link to="/Lobby">Lobby</Link></li>
+        <li><Link to="/SignUp">SignUp</Link></li>
       </ul>
     </nav>
     );
