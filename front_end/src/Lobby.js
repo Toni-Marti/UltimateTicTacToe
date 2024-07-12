@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Lobby.css';
 
-const Lobby = ({ nPlayers }) => {
+const Lobby = ({ nPlayers = [] }) => {
   const [showJoinMessage, setShowJoinMessage] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
