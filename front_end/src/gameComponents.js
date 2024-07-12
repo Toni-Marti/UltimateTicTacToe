@@ -91,7 +91,7 @@ function BoardR({game, mark_function, address = "", className = ""}) {
 }
 
 function GameR({size = [500, 500]}) {
-    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules(false, true)));
+    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()])));
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");
 
