@@ -7,17 +7,24 @@ const io = require('socket.io')(server,{
 // We log the messages and users received in the
 // console and broadcast them
 io.on('connection', socket =>{
+    let roomCounter = 0;
+    let rooms = [];
+
     console.log('Connected')
 
-    socket.on('userName', mydata => {
+    socket.on('findRoom', mydata => {
         console.log('Server received: ', mydata)
-        io.emit('userName', mydata)
+        roomCounter = roomCounter+1;
+        rooms.push(roomCounter);
+        io.emit('findRoom', roomCounter)
     })
 
-    socket.on('msg', mydata => {
-        console.log('Server received: ', mydata)
-        io.emit('msg', mydata)
-    })
+    for (var i=0; i<rooms.length; i++){
+        socket.on(room[i], mydata => {
+            console.log('Server received data from: ', mydata)
+            io.emit('msg', mydata)
+        })
+    }
 })
 
 // The server listens on port 4000
