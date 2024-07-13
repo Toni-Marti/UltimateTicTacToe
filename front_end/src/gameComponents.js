@@ -10,10 +10,11 @@ const saturated_blue = "#006fff";
 const light_purple = "#e899f7";
 const saturated_purple = "#d500ff";
 
-const player1_light_color = light_red;
-const player1_saturated_color = saturated_red;
-const player2_light_color = light_blue;
-const player2_saturated_color = saturated_blue;
+const background_color = white;
+const player1_light_color = light_blue;
+const player1_saturated_color = saturated_blue;
+const player2_light_color = light_red;
+const player2_saturated_color = saturated_red;
 const bouth_players_light_color = light_purple;
 const bouth_players_saturated_color = saturated_purple;
 
@@ -30,7 +31,7 @@ function tileColor(address, game) {
     let value = game.getValue(address);
 
     if (value === MARK.NONE) {
-        return white;
+        return background_color;
     }
     else if ([MARK.XO, MARK.OX].includes(value)) {
         if (game.isPartOfValidLine(address)) {
@@ -58,17 +59,24 @@ function tileColor(address, game) {
     }
 }
 
-function TileR({game, mark_function, address, className = ""}) {
-    let covered_class = shouldBeCovered(address, game) ? " Covered" : "";
-    let finalClassName = "Tile " + className + covered_class;
+function TileR({game, hover_player, mark_function, address, className = ""}) {
     let color = tileColor(address, game);
+    if (color === background_color) {
+        color = null;
+    }   
+    let covered_class = shouldBeCovered(address, game) ? " Covered" : "";
+    let hover_class  = ""
+    if (color === null && covered_class === "") {
+        hover_class = " HoverPlayer" + hover_player
+    }
+    let finalClassName = "Tile " + className + covered_class + hover_class;
 
     return (
         <div style={{background:color}} className={finalClassName} onClick={() => mark_function(address)} />
     );
 }
 
-function BoardR({game, mark_function, address = "", className = ""}) {
+function BoardR({game, mark_function, hover_player, address = "", className = ""}) {
     let board = game.getTile(address);
     let covered_class = shouldBeCovered(address, game) ? " Covered" : "";
     let finalClassName = "Board " + className + covered_class;
@@ -79,8 +87,8 @@ function BoardR({game, mark_function, address = "", className = ""}) {
             {board.tiles.map((tile, index) => {
                 let tile_address = address + (index + 1);
                 return (tile instanceof Board
-                    ? <BoardR game={game} mark_function={mark_function} address={tile_address} className={"GridItem" + (index+1)} key={tile_address} />
-                    : <TileR game={game} mark_function={mark_function} address={tile_address} className={"GridItem" + (index+1)} key={tile_address} />)
+                    ? <BoardR game={game} mark_function={mark_function} hover_player={hover_player} address={tile_address} className={"GridItem" + (index+1)} key={tile_address} />
+                    : <TileR game={game} mark_function={mark_function} hover_player={hover_player} address={tile_address} className={"GridItem" + (index+1)} key={tile_address} />)
             })}
             <div className="Line Line1"></div>
             <div className="Line Line2"></div>
@@ -90,10 +98,11 @@ function BoardR({game, mark_function, address = "", className = ""}) {
     );
 }
 
-function GameR({size = [500, 500]}) {
+function GameR({size = [500, 500], isMyTyrn = true}) {
     const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules()));
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");
+    const [hasShownWinner, setHasShownWinner] = useState(false);
 
     // Only for debuging
     function colorChanged(val) {
@@ -122,8 +131,13 @@ function GameR({size = [500, 500]}) {
     }
 
     function markTile(address) {
+        if (!hasShownWinner && gameSt.mainBoard.value !== MARK.NONE) {
+            
+        }
+
         let newGameSt = Game.clone(gameSt); 
-        if (!newGameSt.markTile(address)) {
+
+        if (!newGameSt.markTile(address) ) {
             return;
         };
         
@@ -135,9 +149,14 @@ function GameR({size = [500, 500]}) {
             else if (colorRadio === "blue") {
                 newGameSt.currentPlayer = MARK.O;
             }
-        }
+        } 
 
         setGameSt(newGameSt); 
+    }
+
+    let hover_player = null;
+    if (isMyTyrn) {
+        hover_player = gameSt.currentPlayer;
     }
 
     return (
@@ -157,8 +176,10 @@ function GameR({size = [500, 500]}) {
                 null
             }
             <div style={{width: size[0] + "px", height: size[1] + "px"}}>
-                <BoardR game={gameSt} board={gameSt.mainBoard} mark_function={markTile} />
+                <BoardR game={gameSt} hover_player={hover_player} board={gameSt.mainBoard} mark_function={markTile} />
             </div>
+
+            <div className="HoverPlayer1"> test </div>
         </div>
     );
 }

@@ -1,5 +1,9 @@
 :root {
-    --board-margin: 12%
+    --board-margin: 12%;
+
+    /* This proprieties are overwitten in gameComponents.js */
+    --player1_light_color: #50acf2;
+    --player2_light_color: #f28585;
 }
 
 .MainBoard {
@@ -19,7 +23,6 @@
 
 .Tile {
     position: relative;
-    background-color: white;
     width: 100%;
     height: 100%;
 }
@@ -31,7 +34,17 @@
     bottom: 0; 
     left: 0;
     right: 0;
-    background-color: rgb(0, 0, 0, 0.3);
+    background-color: rgb(0, 0, 0, 0.25);
+}
+
+.HoverPlayer1:hover {
+    background: var(--player1_light_color);
+    filter: opacity(0.4);
+}
+
+.HoverPlayer2:hover {
+    background: var(--player2_light_color);
+    filter: opacity(0.4);
 }
 
 .GridItem1 {

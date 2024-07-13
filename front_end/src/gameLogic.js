@@ -367,5 +367,5 @@ class Game {
 }
 
 
-
+export default Game;
 export { MARK, Tile, Board, Rules, Game };
