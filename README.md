@@ -4,4 +4,9 @@ To run the aplication:
 `npm install`
 `npm start`
 
+
+`cd ../back_end`
+`npm install`
+`npm start`
+
 Only install first time.

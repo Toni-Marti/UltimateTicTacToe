@@ -23,7 +23,7 @@ function shouldBeCovered(address, game) {
         address.length - 1 >= game.nextMoveBoardAddress.length) {
         return false;
     } 
-    return game.canClickOn(address.slice(0, -1)) && !game.canClickOn(address) && tile.hasRoom();
+    return game.canClickOn(address.slice(0, -1)) && !game.canClickOn(address)   ;
 }
 
 function tileColor(address, game) {
@@ -91,7 +91,7 @@ function BoardR({game, mark_function, address = "", className = ""}) {
 }
 
 function GameR({size = [500, 500]}) {
-    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()])));
+    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules()));
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");
 

@@ -138,6 +138,9 @@ class Board extends Tile {
                 if ([MARK.OX, MARK.XO].includes(line_mark)) {
                     line_mark = curr_mark;
                 }
+                else if ([MARK.OX, MARK.XO].includes(curr_mark)) {
+                    continue;
+                }
                 else if(line_mark !== curr_mark) {
                     line_mark = MARK.NONE;
                     break;
@@ -244,7 +247,6 @@ class Game {
      *  7 8 9
     */
     markTile(tile_address) {
-        
         if (!this.canClickOn(tile_address)) {
             return false;
         }
@@ -310,6 +312,9 @@ class Game {
                 let curr_value = this.getValue(parent_address+(checking_comb[j]+1));
                 if ([MARK.XO, MARK.OX].includes(line_value)) {
                     line_value = curr_value;
+                }
+                else if([MARK.XO, MARK.OX].includes(curr_value)) {
+                    continue;
                 }
                 else if(line_value !== curr_value) {
                     line_value = MARK.NONE;
