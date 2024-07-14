@@ -16,9 +16,9 @@ io.on('connection', socket =>{
 
     console.log('Connected')
 
-    socket.on('generalChat', (username, password, msg) => {
-        console.log('New message in general chat from', username, ':', msg)
-        io.emit('generalChat', username, msg)
+    socket.on('generalChat', (username, password, eventType, event) => {
+        console.log('New message in general chat from', username, ':', event)
+        io.emit('generalChat', username, event)
     })
 
     socket.on('findRoom', (username, password) => {

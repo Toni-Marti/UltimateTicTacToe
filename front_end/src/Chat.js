@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import { getUsername, getPassword } from './FrontendCommons.js';
 import { getServerAddress } from './serverData.js';
 import './Chat.css';
+import { EVENTTYPE } from './commonsSymbolicLink/socketUtils.js';
 
 const socket = io(getServerAddress() + ':4000');
 
@@ -30,7 +31,7 @@ function Chat(roomId = 0) {
   // with its user name and send them to the server
   const send = (e) => {
     e.preventDefault();
-    socket.emit(communicationId, getUsername(), getPassword(), msg);
+    socket.emit(communicationId, getUsername(), getPassword(), EVENTTYPE.CHAT, msg);
     setMsg('');
   };
 
@@ -38,25 +39,29 @@ function Chat(roomId = 0) {
   // message, and display the chat with the message history
   return (
     <div className="chat-container">
-      <div className="chatMsg">
-        {chat.map((myData, index) => (
-          <p className="chatEntry" key={index}>
-            <span className="userName">{myData.userName}:</span>
-            <span className="msg">{myData.msg}</span>
-          </p>
-        ))}
+      <div className="chat-box">
+        <div className="chatMsg">
+          {chat.map((myData, index) => (
+            <p className="chatEntry" key={index}>
+              <span className="userName">{myData.userName}:</span>
+              <span className="msg">{myData.msg}</span>
+            </p>
+          ))}
+        </div>
+        <form onSubmit={send} className="chat">
+          <input
+            type="text"
+            required
+            placeholder="Message here..."
+            name="msg"
+            value={msg}
+            onChange={(e) => setMsg(e.target.value)}
+          />
+          <button type="submit">
+            Send
+          </button>
+        </form>
       </div>
-      <form onSubmit={send} className="chat">
-        <input
-          type="text"
-          required
-          placeholder="Message here..."
-          name="msg"
-          value={msg}
-          onChange={(e) => setMsg(e.target.value)}
-        />
-        <button type="submit">Send</button>
-      </form>
     </div>
   );
 }
