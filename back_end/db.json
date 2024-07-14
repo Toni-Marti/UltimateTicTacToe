@@ -2,13 +2,8 @@
   "users": [
     {
       "id": 1,
-      "userName": "asdfasdf",
-      "pw": "$2a$10$14VBz9xN/78VqaUWbFPNvO0mWkqXXZPNz8GLlaFfyx.1UY.yZDJUq"
-    },
-    {
-      "id": 2,
       "userName": "asdf",
-      "pw": "$2b$10$mx84fQWZ5Iw8xZOFjl8naONDd4FX78D/bS24h2dbGJ5vezMKtVhia"
+      "password": "$2b$10$g6QUeDr6Sc0q5.fBRbpn1u285fYhqtG0YtPnhzYqmPkppHc2DQYX6"
     }
   ]
 }
