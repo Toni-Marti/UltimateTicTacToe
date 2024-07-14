@@ -1,13 +1,13 @@
 To run the aplication:
 
-`cd front_end`
+`cd back_end`
 
 `npm install`
 
 `npm start`
 
 
-`cd ../back_end`
+`cd ../front_end`
 
 `npm install`
 
