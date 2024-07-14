@@ -11,7 +11,7 @@ import Login from './Login';
 import SignUp from './SignUp';
 import TestPage from './TestPage';
 import Chat from './Chat.js';
-import { getPassword } from './FrontendCommons.js';
+import { getUsername } from './FrontendCommons.js';
 
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
     
     <Router>
         <div className='App'>
-          <h1>Welcome {getPassword()}</h1>
+          <h1>Welcome {getUsername()}</h1>
           <Nav />
           <div>
           <Routes>
