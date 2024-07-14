@@ -2,8 +2,33 @@
   "users": [
     {
       "id": 1,
-      "userName": "asdf",
-      "password": "$2b$10$g6QUeDr6Sc0q5.fBRbpn1u285fYhqtG0YtPnhzYqmPkppHc2DQYX6"
+      "username": "1234",
+      "password": "$2b$10$09P2ikHSqulhqUvescFOVu/9Km2Et3YpGs1ijDrwPRfKnrdGKveBu",
+      "gameStats": {
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
+    },
+    {
+      "id": 2,
+      "username": "1234",
+      "password": "$2b$10$k45T3nfiv3d41ppRnuIoXeGJ5kH6QZ6lZ5R8FCWmV3vtn2JoUipem",
+      "gameStats": {
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
+    },
+    {
+      "id": 3,
+      "username": "1234",
+      "password": "$2b$10$Fy6U5Rpv/.uK15bdDlsxCOrdV2RxvzkUsHzKOhETqKUe6Z8NChfMW",
+      "gameStats": {
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
     }
   ]
 }
