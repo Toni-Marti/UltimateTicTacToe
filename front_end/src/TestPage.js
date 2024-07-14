@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
 import {Credentials, EVENTTYPE, SocketEvent} from './commonsSymbolicLink/socketUtils.js'
+import {getUsername, setUsername, getPassword, setPassword} from './Credentials.js'
 
 const socket = io('http://localhost:4000')
 
 function TestPage()
 {
     // SERVER.JS (THIS CODE IS TEMPORAL AND ONLY TO TEST SERVER.JS)
+
+    setUsername('paco')
+
     const [roomId, setRoomId] = useState(-1);
     let credentials = new Credentials();
     let socketEvent = new SocketEvent();
@@ -35,6 +39,9 @@ function TestPage()
 
     return(
         <div>
+            The username is: {getUsername()}
+            <br/>
+
             {roomId === -1 && (<button onClick={findRoom}> Find room </button>)}
             {roomId !== -1 && (<div> Room number: {roomId} </div>)}
 
