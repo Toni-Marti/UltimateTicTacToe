@@ -161,6 +161,7 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
 
     return (
         <div className="Game">
+            <h1> Game </h1>
             <p>{gameSt.player1} vs {gameSt.player2}</p>
             <span style={{fontWeight:"bold"}}>Debug mode</span>
             <input type="checkbox" id="debug_mode" checked={isDebugMode} onChange={() => debugModified(!isDebugMode)}/>
