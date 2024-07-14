@@ -37,12 +37,13 @@ io.on('connection', socket =>{
 
     socket.on('signUp', async (newuser, pw) => {
         console.log('Connected')
+
         let users = []
         try {
             const response = await fetch('http://localhost:9999/users/');
             const data = await response.json();
             
-            const users = data;
+            users = data;
             //console log to insure that use-effect is working properly
             console.log("If Printed, users were loaded.")
         } 
