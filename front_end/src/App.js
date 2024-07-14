@@ -8,6 +8,7 @@ import { GameR } from './gameComponents';
 import Lobby from './Lobby';
 import Login from './Login';
 import SignUp from './SignUp';
+import TestPage from './TestPage';
 
 
 function App() {
