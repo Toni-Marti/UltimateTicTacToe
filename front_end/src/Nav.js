@@ -12,6 +12,7 @@ function Nav() {
         <li><Link to="/Lobby">Lobby</Link></li>
         <li><Link to="/SignUp">SignUp</Link></li>
         <li><Link to="/TestPage">TestPage</Link></li>
+        <li><Link to="/Chat">GeneralChat</Link></li>
       </ul>
     </nav>
     );

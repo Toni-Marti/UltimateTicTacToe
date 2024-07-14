@@ -15,7 +15,7 @@ io.on('connection', socket =>{
     console.log('Connected')
 
     socket.on('generalChat', (username, password, msg) => {
-        console.log('New message in general chat from', username, ': ', msg)
+        console.log('New message in general chat from', username, ':', msg)
         io.emit('generalChat', username, msg)
     })
 
