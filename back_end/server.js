@@ -10,15 +10,20 @@ const io = require('socket.io')(server,{
 // console and broadcast them
 io.on('connection', socket =>{
     let roomNumber = 0;
-    let rooms = [1, 2,3,4,5,6];
+    let rooms = [];
 
     console.log('Connected')
 
+    socket.on('generalChat', (username, password, msg) => {
+        // IMPLEMENT
+        let a = 0;
+    })
+
     socket.on('findRoom', (username, password) => {
-        console.log('This user was added to a room: ', username)
         roomNumber = roomNumber+1;
         rooms.push(roomNumber);
         io.emit('findRoom', roomNumber)
+        console.log('The user', username, 'was added to the room:', roomNumber)
 
         subscribeToRoom(roomNumber);
     })
