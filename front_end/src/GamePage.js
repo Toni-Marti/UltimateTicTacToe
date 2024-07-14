@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
 import {EVENTTYPE} from './commonsSymbolicLink/socketUtils.js'
-import {getUsername, setUsername, getPassword, setPassword} from './FrontendCommons.js'
+import {getUsername, getPassword} from './FrontendCommons.js'
+import gameComponent from './gameComponents.js'
+import Chat from './Chat.js'
 
 const socket = io('http://localhost:4000')
 
-function TestPage()
+function GamePage(roomId)
 {
-    // SERVER.JS (THIS CODE IS TEMPORAL AND ONLY TO TEST SERVER.JS)
-
-    setUsername('paco')
-
-    const [roomId, setRoomId] = useState(-1);
+    /*const [roomId, setRoomId] = useState(-1);
     const [eventType, setEventType] = useState(EVENTTYPE.NONE);
     const [event, setEvent] = useState('');
 
@@ -55,7 +53,7 @@ function TestPage()
                 <button type='submit'>Send</button>
             </form>
         </div>
-    );
+    );*/
 }
 
-export default TestPage;
+export default GamePage;
