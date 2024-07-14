@@ -7,11 +7,11 @@ const socket = io( getServerAddress() + ':4000' )
 function SignUp() {
 
     const [pw, setPw] = useState("");
-    const [userName, setUserName] = useState(""); 
+    const [un, setUn] = useState(""); 
 
     const send = (e) => {
         e.preventDefault();
-        socket.emit('signUp',{userName,pw})
+        socket.emit('signUp',{un,pw})
         console.log('Emitted')
       };
     
@@ -24,8 +24,8 @@ function SignUp() {
                     type="text"
                     placeholder={"Username"}
                     name="userName"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
+                    value={un}
+                    onChange={(e) => setUn(e.target.value)}
                 />
                 <input
                     type="password"
