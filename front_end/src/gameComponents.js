@@ -108,10 +108,10 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
     function colorChanged(val) {
         let newGameSt = Game.clone(gameSt); 
         
-        if (val === "red") {
+        if (val === "blue") {
             newGameSt.currentPlayer = MARK.X;
         }
-        else if (val === "blue") {
+        else if (val === "red") {
             newGameSt.currentPlayer = MARK.O;
         }
         setColorRadio(val);
@@ -143,10 +143,10 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
         
         if (isDebugMode) {
             newGameSt.nextMoveBoardAddress = "";
-            if (colorRadio === "red") {
+            if (colorRadio === "blue") {
                 newGameSt.currentPlayer = MARK.X;
             }
-            else if (colorRadio === "blue") {
+            else if (colorRadio === "red") {
                 newGameSt.currentPlayer = MARK.O;
             }
         } 
@@ -169,8 +169,8 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
                     <span>Color:</span>
                     <br/>
                     <input type="radio" name="color" checked={colorRadio==="switching"} onChange={() => colorChanged("switching")}/> <span>Swiching</span><br/>
-                    <input type="radio" name="color" checked={colorRadio==="red"} onChange={() => colorChanged("red")}/> <span>Red</span><br/>
                     <input type="radio" name="color" checked={colorRadio==="blue"} onChange={() => colorChanged("blue")}/> <span>Blue</span><br/>
+                    <input type="radio" name="color" checked={colorRadio==="red"} onChange={() => colorChanged("red")}/> <span>Red</span><br/>
                 </div>
                 :
                 null
