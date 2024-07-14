@@ -35,14 +35,15 @@ io.on('connection', socket =>{
         });
     }
 
-    socket.on('signUp', async (userName, pw) => {
+    socket.on('signUp', async (newuser, pw) => {
         console.log('Connected')
-        const users = []
+
+        let users = []
         try {
             const response = await fetch('http://localhost:9999/users/');
             const data = await response.json();
             
-            users = JSON.parse(data);
+            users = data;
             //console log to insure that use-effect is working properly
             console.log("If Printed, users were loaded.")
         } 
@@ -55,10 +56,10 @@ io.on('connection', socket =>{
         const newUserId = highestUserId + 1;
         
         //hash the password
-        const hashedPassword = bcrypt.hash(pw, 10);
+        const hashedPassword = await bcrypt.hash(String(pw), 10);
         
         //create the array that will be used to insert into json
-        const newUserObj = { id: parseInt(newUserId, 10), userName, pw: hashedPassword };
+        const newUserObj = { id: parseInt(newUserId, 10), userName: newuser.userName, pw: hashedPassword };
     
         //call local json server using POST method to submit data 
         fetch('http://localhost:9999/users/', {
@@ -66,10 +67,8 @@ io.on('connection', socket =>{
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newUserObj)
         }).then(() => {
-            //for some reason, the first time you submit a post, the message doesnt work, but it does on the second deletion
-            setMessage('A new user has been added successfully!');
             //debugging message
-            console.log(message)
+            console.log('A new user has been added successfully!')
         });
         })
 })
