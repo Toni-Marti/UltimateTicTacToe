@@ -7,7 +7,7 @@ const socket = io('http://localhost:4000');
 
 const Chat = () => {
     const [msg, setMsg] = useState('');
-    const [chat, setChat] = useState([]);
+    const [chat, setChat] = useState([["Nombre", "mensaje"]]);
 
     useEffect(() => {
         socket.on('msg', myData => {
