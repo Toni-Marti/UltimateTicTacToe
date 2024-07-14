@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MARK, Tile, Board, Rules, Game } from "./gameLogic";
+import PopUp from "./popUp";
 import "./gameComponents.css";
 
 const white = "#FFFFFF";
@@ -19,6 +20,10 @@ const bouth_players_light_color = light_purple;
 const bouth_players_saturated_color = saturated_purple;
 
 function shouldBeCovered(address, game) {
+    if (game.mainBoard.value !== MARK.NONE) {
+        return false;
+    }
+
     let tile = game.getTile(address);
     if (!(tile instanceof Board) &&
         address.length - 1 >= game.nextMoveBoardAddress.length) {
@@ -61,14 +66,14 @@ function tileColor(address, game) {
 
 function TileR({game, hover_player, mark_function, address, className = ""}) {
     let color = tileColor(address, game);
-    if (color === background_color) {
-        color = null;
-    }   
     let covered_class = shouldBeCovered(address, game) ? " Covered" : "";
     let hover_class  = ""
-    if (color === null && covered_class === "") {
+
+    if (color === background_color && covered_class === "") {
         hover_class = " HoverPlayer" + hover_player
+        color = null;
     }
+
     let finalClassName = "Tile " + className + covered_class + hover_class;
 
     return (
@@ -131,13 +136,9 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
     }
 
     function markTile(address) {
-        if (!hasShownWinner && gameSt.mainBoard.value !== MARK.NONE) {
-            
-        }
-
         let newGameSt = Game.clone(gameSt); 
 
-        if (!newGameSt.markTile(address) ) {
+        if (!isMyTyrn || !newGameSt.markTile(address)) {
             return;
         };
         
@@ -152,6 +153,14 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
         } 
 
         setGameSt(newGameSt); 
+    }
+
+    let showWinner = false;
+    if (gameSt.mainBoard.value !== MARK.NONE) {
+        isMyTyrn = false;
+        if (!hasShownWinner) {
+            showWinner = true;
+        }
     }
 
     let hover_player = null;
@@ -178,8 +187,9 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
             <div style={{width: size[0] + "px", height: size[1] + "px"}}>
                 <BoardR game={gameSt} hover_player={hover_player} board={gameSt.mainBoard} mark_function={markTile} />
             </div>
-
-            <div className="HoverPlayer1"> test </div>
+            {showWinner 
+             ? <PopUp /> 
+             : null}
         </div>
     );
 }
