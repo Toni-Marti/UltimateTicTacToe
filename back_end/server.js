@@ -1,5 +1,5 @@
 const { EVENTTYPE } = require('./commonsSymbolicLink/socketUtils.js');
-
+const bcrypt = require('bcrypt');
 const app = require('express')()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server,{
@@ -34,6 +34,44 @@ io.on('connection', socket =>{
             io.emit(roomNumber, eventType, event);
         });
     }
+
+    socket.on('signUp', async (userName, pw) => {
+        console.log('Connected')
+        const users = []
+        try {
+            const response = await fetch('http://localhost:9999/users/');
+            const data = await response.json();
+            
+            users = JSON.parse(data);
+            //console log to insure that use-effect is working properly
+            console.log("If Printed, users were loaded.")
+        } 
+        catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    
+        //take the previous
+        const highestUserId = users.length > 0 ? Math.max(...users.map(user => parseInt(user.id))) : 0;
+        const newUserId = highestUserId + 1;
+        
+        //hash the password
+        const hashedPassword = bcrypt.hash(pw, 10);
+        
+        //create the array that will be used to insert into json
+        const newUserObj = { id: parseInt(newUserId, 10), userName, pw: hashedPassword };
+    
+        //call local json server using POST method to submit data 
+        fetch('http://localhost:9999/users/', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newUserObj)
+        }).then(() => {
+            //for some reason, the first time you submit a post, the message doesnt work, but it does on the second deletion
+            setMessage('A new user has been added successfully!');
+            //debugging message
+            console.log(message)
+        });
+        })
 })
 
 // The server listens on port 4000

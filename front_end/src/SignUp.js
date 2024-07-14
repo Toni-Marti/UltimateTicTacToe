@@ -8,35 +8,17 @@ function SignUp() {
     const [pw, setPw] = useState("");
     const [userName, setUserName] = useState(""); 
 
-    const handleSubmit = async (e) => {
+    const send = (e) => {
         e.preventDefault();
-        //take the previous
-        const highestUserId = users.length > 0 ? Math.max(...users.map(user => parseInt(user.id))) : 0;
-        const newUserId = highestUserId + 1;
-        
-        //hash the password
-        const hashedPassword = await bcrypt.hash(pw, 10);
-
-        //create the array that will be used to insert into json
-        const newUserObj = { id: parseInt(newUserId, 10), userName, pw: hashedPassword };
-
-        //call local json server using POST method to submit data 
-        fetch('http://localhost:9999/users/', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newUserObj)
-        }).then(() => {
-            //for some reason, the first time you submit a post, the message doesnt work, but it does on the second deletion
-            setMessage('A new user has been added successfully!');
-            //debugging message
-            console.log(message)
-        });
-    }
+        socket.emit('signUp',{userName,pw})
+        console.log('Emitted')
+      };
+    
 
     return(
         <div className='SignUp'>
             <h1>Sign-Up:</h1>
-            <form onSubmit={handleSubmit} className="chat">
+            <form onSubmit={send} className="chat">
                 <input
                     type="text"
                     placeholder={"Username"}
