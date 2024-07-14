@@ -9,6 +9,7 @@ import Lobby from './Lobby';
 import Login from './Login';
 import SignUp from './SignUp';
 import TestPage from './TestPage';
+import Chat from './Chat.js';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/Login" element={<Login />} />
             <Route path="/SignUp" element={<SignUp />} />
             <Route path="/TestPage" element={<TestPage />} />
+            <Route path="/Chat" element={<Chat />} />
           </Routes>
           </div>
         </div>
