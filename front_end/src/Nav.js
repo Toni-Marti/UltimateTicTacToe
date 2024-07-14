@@ -13,6 +13,7 @@ function Nav() {
         <br/>
         Temporal links:
         <li><Link to="/Game">GameR</Link></li>
+        <li><Link to="/GamePage">GamePage</Link></li>
         <li><Link to="/TestPage">TestPage</Link></li>
         <li><Link to="/Chat">GeneralChat</Link></li>
       </ul>
