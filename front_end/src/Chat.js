@@ -10,12 +10,12 @@ const socket = io(getServerAddress() + ':4000');
 function Chat({ roomId = 0 }) {
   let communicationId = 'generalChat';
   if (roomId !== 0) {
-    communicationId = roomId; // Corregido: asignación correcta de roomId
+    communicationId = roomId; 
   }
 
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
-  const messagesEndRef = useRef(null); // Referencia para el final de los mensajes
+  const messagesEndRef = useRef(null); 
 
   useEffect(() => {
     socket.on(communicationId, (userName, msg) => {
@@ -24,7 +24,7 @@ function Chat({ roomId = 0 }) {
   });
 
   useEffect(() => {
-    scrollToBottom(); // Llama a la función de scroll al montar y actualizar chat
+    scrollToBottom(); 
   }, [chat]);
 
   const scrollToBottom = () => {
@@ -47,7 +47,7 @@ function Chat({ roomId = 0 }) {
               <span className="msg">{myData.msg}</span>
             </p>
           ))}
-          <div ref={messagesEndRef} /> {/* Referencia para el scroll automático */}
+          <div ref={messagesEndRef} /> 
         </div>
         <form onSubmit={send} className="chat">
           <input
