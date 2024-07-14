@@ -8,15 +8,20 @@ import { EVENTTYPE } from './commonsSymbolicLink/socketUtils.js';
 const socket = io(getServerAddress() + ':4000');
 
 function Chat({ roomId = 0 }) {
+  // communicationId will be 'generalChat' or the number of the room
+  // if we are in a private room
   let communicationId = 'generalChat';
   if (roomId !== 0) {
     communicationId = roomId;
   }
 
+  // Variables for saving the message and message list
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
   const messagesEndRef = useRef(null);
 
+  // Each time the website is updated, we add
+  // the new message with its user name to the chat
   useEffect(() => {
     socket.on(communicationId, (userName, msg) => {
       setChat([...chat, { userName, msg }]);
@@ -31,12 +36,16 @@ function Chat({ roomId = 0 }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // We show through the console the message
+  // with its user name and send them to the server
   const send = (e) => {
     e.preventDefault();
     socket.emit(communicationId, getUsername(), getPassword(), EVENTTYPE.CHAT, msg);
     setMsg('');
   };
 
+  // We display the form to enter the user name and
+  // message, and display the chat with the message history
   return (
     <div className="chat-container">
       <div className="chat-box">
