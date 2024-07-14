@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import { getUsername, getPassword } from './FrontendCommons.js';
 import { getServerAddress } from './serverData.js';
@@ -7,36 +7,36 @@ import { EVENTTYPE } from './commonsSymbolicLink/socketUtils.js';
 
 const socket = io(getServerAddress() + ':4000');
 
-function Chat(roomId = 0) {
-  // communicationId will be 'generalChat' or the number of the room
-  // if we are in a private room
+function Chat({ roomId = 0 }) {
   let communicationId = 'generalChat';
   if (roomId !== 0) {
-    let communicationId = roomId;
+    communicationId = roomId; // Corregido: asignación correcta de roomId
   }
 
-  // Variables for saving the message and message list
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
+  const messagesEndRef = useRef(null); // Referencia para el final de los mensajes
 
-  // Each time the website is updated, we add
-  // the new message with its user name to the chat
   useEffect(() => {
     socket.on(communicationId, (userName, msg) => {
       setChat([...chat, { userName, msg }]);
     });
   });
 
-  // We show through the console the message
-  // with its user name and send them to the server
+  useEffect(() => {
+    scrollToBottom(); // Llama a la función de scroll al montar y actualizar chat
+  }, [chat]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const send = (e) => {
     e.preventDefault();
     socket.emit(communicationId, getUsername(), getPassword(), EVENTTYPE.CHAT, msg);
     setMsg('');
   };
 
-  // We display the form to enter the user name and
-  // message, and display the chat with the message history
   return (
     <div className="chat-container">
       <div className="chat-box">
@@ -47,6 +47,7 @@ function Chat(roomId = 0) {
               <span className="msg">{myData.msg}</span>
             </p>
           ))}
+          <div ref={messagesEndRef} /> {/* Referencia para el scroll automático */}
         </div>
         <form onSubmit={send} className="chat">
           <input
@@ -57,9 +58,7 @@ function Chat(roomId = 0) {
             value={msg}
             onChange={(e) => setMsg(e.target.value)}
           />
-          <button type="submit">
-            Send
-          </button>
+          <button type="submit">Send</button>
         </form>
       </div>
     </div>
