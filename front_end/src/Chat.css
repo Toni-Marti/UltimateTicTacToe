@@ -39,6 +39,10 @@
   font-weight: bold;
 }
 
+.userName.myMessage {
+  color: #0056b3;
+}
+
 .msg {
   margin-left: 5px;
 }

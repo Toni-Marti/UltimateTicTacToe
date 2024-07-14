@@ -10,12 +10,12 @@ const socket = io(getServerAddress() + ':4000');
 function Chat({ roomId = 0 }) {
   let communicationId = 'generalChat';
   if (roomId !== 0) {
-    communicationId = roomId; 
+    communicationId = roomId;
   }
 
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
-  const messagesEndRef = useRef(null); 
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     socket.on(communicationId, (userName, msg) => {
@@ -24,7 +24,7 @@ function Chat({ roomId = 0 }) {
   });
 
   useEffect(() => {
-    scrollToBottom(); 
+    scrollToBottom();
   }, [chat]);
 
   const scrollToBottom = () => {
@@ -42,12 +42,12 @@ function Chat({ roomId = 0 }) {
       <div className="chat-box">
         <div className="chatMsg">
           {chat.map((myData, index) => (
-            <p className="chatEntry" key={index}>
-              <span className="userName">{myData.userName}:</span>
+            <p className={`chatEntry ${myData.userName === getUsername() ? 'myMessage' : ''}`} key={index}>
+              <span className={`userName ${myData.userName === getUsername() ? 'myMessage' : ''}`}>{myData.userName}:</span>
               <span className="msg">{myData.msg}</span>
             </p>
           ))}
-          <div ref={messagesEndRef} /> 
+          <div ref={messagesEndRef} />
         </div>
         <form onSubmit={send} className="chat">
           <input
@@ -66,3 +66,4 @@ function Chat({ roomId = 0 }) {
 }
 
 export default Chat;
+
