@@ -6,6 +6,13 @@ import { getServerAddress } from './serverData.js'
 const socket = io( getServerAddress() + ':4000' )
 
 function Chat(roomId = 0) {
+  // communicationId will be 'generalChat' or the number of the room
+  // if we are in a private room
+  let communicationId = 'generalChat';
+  if (roomId !== 0){
+    let communicationId = roomId;
+  }
+
   // Variables for saving the message and message list
   const [msg, setMsg] = useState('')
   const [chat, setChat] = useState([])
@@ -13,7 +20,7 @@ function Chat(roomId = 0) {
   // Each time the website is updated, we add
   // the new message with its user name to the chat
   useEffect(() => {
-    socket.on('generalChat', (userName, msg) => {
+    socket.on(communicationId, (userName, msg) => {
       setChat([...chat, {userName, msg}])
     })
   })
@@ -22,7 +29,7 @@ function Chat(roomId = 0) {
   // with its user name and send them to the server
   const send = (e) => {
     e.preventDefault();
-    socket.emit('generalChat', getUsername(), getPassword(), msg)
+    socket.emit(communicationId, getUsername(), getPassword(), msg)
     setMsg('')
   };
 
