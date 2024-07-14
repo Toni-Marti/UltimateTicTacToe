@@ -1,4 +1,4 @@
-const { Credentials, EVENTTYPE, SocketEvent } = require('./commonsSymbolicLink/socketUtils.js');
+const { EVENTTYPE } = require('./commonsSymbolicLink/socketUtils.js');
 
 const app = require('express')()
 const server = require('http').createServer(app)
@@ -14,8 +14,8 @@ io.on('connection', socket =>{
 
     console.log('Connected')
 
-    socket.on('findRoom', credentials => {
-        console.log('This user was added to a room: ', credentials.username)
+    socket.on('findRoom', (username, password) => {
+        console.log('This user was added to a room: ', username)
         roomNumber = roomNumber+1;
         rooms.push(roomNumber);
         io.emit('findRoom', roomNumber)
@@ -24,9 +24,9 @@ io.on('connection', socket =>{
     })
 
     function subscribeToRoom(roomNumber) {
-        socket.on(roomNumber, socketEvent => {
-            console.log('Server received an event with the content: ', socketEvent.event);
-            io.emit(roomNumber, socketEvent);
+        socket.on(roomNumber, (username, password, eventType, event) => {
+            console.log('Server received an event with the content: ', event);
+            io.emit(roomNumber, eventType, event);
         });
     }
 })

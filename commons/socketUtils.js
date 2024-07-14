@@ -1,9 +1,11 @@
+/*
 class Credentials {
     constructor(username = 'guest', password = '') {
         this.username = username;
         this.password = password;
     }
 }
+*/
 
 const EVENTTYPE = Object.freeze({
     NONE: 0,
@@ -11,6 +13,7 @@ const EVENTTYPE = Object.freeze({
     CHAT: 2,
 });
 
+/*
 class SocketEvent {
     constructor(credentials = new Credentials(), eventType = EVENTTYPE.NONE, event = '') {
         this.credentials = credentials;
@@ -18,6 +21,6 @@ class SocketEvent {
         this.event = event;
     }
 }
+*/
 
-//export {Credentials, EVENTTYPE, SocketEvent};
-module.exports = { Credentials, EVENTTYPE, SocketEvent };
+module.exports = { EVENTTYPE };

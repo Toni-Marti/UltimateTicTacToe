@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
-import {Credentials, EVENTTYPE, SocketEvent} from './commonsSymbolicLink/socketUtils.js'
+import {EVENTTYPE} from './commonsSymbolicLink/socketUtils.js'
 import {getUsername, setUsername, getPassword, setPassword} from './Credentials.js'
 
 const socket = io('http://localhost:4000')
@@ -12,14 +12,12 @@ function TestPage()
     setUsername('paco')
 
     const [roomId, setRoomId] = useState(-1);
-    let credentials = new Credentials();
-    let socketEvent = new SocketEvent();
     const [eventType, setEventType] = useState(EVENTTYPE.NONE);
     const [event, setEvent] = useState('');
 
     const findRoom = (e) => {
         e.preventDefault();
-        socket.emit('findRoom', credentials)
+        socket.emit('findRoom', getUsername(), getPassword())
     };
 
     socket.on('findRoom', roomNumber => {
@@ -28,13 +26,11 @@ function TestPage()
 
     const sendEvent = (e) => {
         e.preventDefault();
-        socketEvent.eventType = eventType;
-        socketEvent.event = event;
-        socket.emit(roomId, socketEvent)
+        socket.emit(roomId, getUsername(), getPassword(), eventType, event)
     };
 
-    socket.on(roomId, socketEvent => {
-        console.log("eventType: ", socketEvent.eventType, "event: ", socketEvent.event)
+    socket.on(roomId, (eventType, event) => {
+        console.log("eventType: ", eventType, "event: ", event)
     })
 
     return(
