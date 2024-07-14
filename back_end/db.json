@@ -1,0 +1,9 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "userName": "asdf",
+      "password": "$2b$10$g6QUeDr6Sc0q5.fBRbpn1u285fYhqtG0YtPnhzYqmPkppHc2DQYX6"
+    }
+  ]
+}

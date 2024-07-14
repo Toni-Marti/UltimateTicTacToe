@@ -1,27 +1,23 @@
-
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
-import {Credentials, EVENTTYPE, SocketEvent} from './commonsSymbolicLink/socketUtils.js'
-import {getUsername, setUsername, getPassword, setPassword} from './FrontendCommons.js'
 import { getServerAddress } from './serverData.js'
 
 const socket = io( getServerAddress() + ':4000' )
 
-function Login()
-{
-    
-    const [users, setUsers] = useState([]);
-    const [message, setMessage] = useState('');
+function SignUp() {
+
     const [pw, setPw] = useState("");
     const [userName, setUserName] = useState(""); 
 
     const send = (e) => {
         e.preventDefault();
-        socket.emit('login',{userName,pw})
+        socket.emit('signUp',{userName,pw})
+        console.log('Emitted')
       };
     
+
     return(
-        <div className='Login'>
+        <div className='SignUp'>
             <h1>Sign-Up:</h1>
             <form onSubmit={send} className="chat">
                 <input
@@ -38,10 +34,10 @@ function Login()
                     value={pw}
                     onChange={(e) => setPw(e.target.value)}
                 />
-                <button type="submit">Login</button>
+                <button type="submit">Sign Up</button>
             </form>
         </div>
     );
 }
 
-export default Login;
+export default SignUp;
