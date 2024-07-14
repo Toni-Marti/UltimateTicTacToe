@@ -20,10 +20,10 @@ function App() {
           <Nav />
           <div>
           <Routes>
-            <Route path="/Game" element={<GameR />}/>
             <Route path="/Lobby" element={<Lobby nPlayers={[["ExampleName1", "ExampleRules1"], ["ExampleName2", "ExampleRules2"]]} />}/>
             <Route path="/Login" element={<Login />} />
             <Route path="/SignUp" element={<SignUp />} />
+            <Route path="/Game" element={<GameR />}/>
             <Route path="/TestPage" element={<TestPage />} />
             <Route path="/Chat" element={<Chat />} />
           </Routes>
