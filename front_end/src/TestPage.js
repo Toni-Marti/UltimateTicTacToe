@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
 import {EVENTTYPE} from './commonsSymbolicLink/socketUtils.js'
-import {getUsername, setUsername, getPassword, setPassword} from './Credentials.js'
+import {getUsername, setUsername, getPassword, setPassword} from './FrontendCommons.js'
 
 const socket = io('http://localhost:4000')
 

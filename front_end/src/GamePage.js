@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
 import {EVENTTYPE} from './commonsSymbolicLink/socketUtils.js'
-import {getUsername, getPassword} from './Credentials.js'
+import {getUsername, getPassword} from './FrontendCommons.js'
 import gameComponent from './gameComponents.js'
 import Chat from './Chat.js'
 
