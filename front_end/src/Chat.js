@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
 import {getUsername, getPassword} from './FrontendCommons.js'
+import { getServerAddress } from './serverData.js'
 
-const socket = io('http://localhost:4000')
+const socket = io( getServerAddress() + ':4000' )
 
 function Chat(roomId = 0) {
   // Variables for saving the message and message list

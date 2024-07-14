@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
+import { getServerAddress } from './serverData.js'
 
-const socket = io('http://localhost:4000')
+const socket = io( getServerAddress() + ':4000' )
 
 function SignUp() {
 
