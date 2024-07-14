@@ -20,8 +20,10 @@ function TestPage()
         socket.emit('findRoom', getUsername(), getPassword())
     };
 
-    socket.on('findRoom', roomNumber => {
-        setRoomId(roomNumber);
+    socket.on('findRoom', (username, roomNumber) => {
+        if (username === getUsername()){
+            setRoomId(roomNumber);
+        }
     })
 
     const sendEvent = (e) => {

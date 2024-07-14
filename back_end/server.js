@@ -15,14 +15,14 @@ io.on('connection', socket =>{
     console.log('Connected')
 
     socket.on('generalChat', (username, password, msg) => {
-        // IMPLEMENT
-        let a = 0;
+        console.log('New message in general chat from', username, ': ', msg)
+        io.emit('generalChat', username, msg)
     })
 
     socket.on('findRoom', (username, password) => {
         roomNumber = roomNumber+1;
         rooms.push(roomNumber);
-        io.emit('findRoom', roomNumber)
+        io.emit('findRoom', username, roomNumber)
         console.log('The user', username, 'was added to the room:', roomNumber)
 
         subscribeToRoom(roomNumber);
