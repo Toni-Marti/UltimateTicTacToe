@@ -35,7 +35,7 @@ io.on('connection', socket =>{
         });
     }
 
-    socket.on('signUp', async (newuser, pw) => {
+    socket.on('signUp', async (newuser) => {
         console.log('Connected')
 
         let users = []
@@ -56,10 +56,10 @@ io.on('connection', socket =>{
         const newUserId = highestUserId + 1;
         
         //hash the password
-        const hashedPassword = await bcrypt.hash(String(pw), 10);
+        const hashedPassword = await bcrypt.hash(String(newuser.pw), 10);
         
         //create the array that will be used to insert into json
-        const newUserObj = { id: parseInt(newUserId, 10), userName: newuser.userName, pw: hashedPassword };
+        const newUserObj = { id: parseInt(newUserId, 10), userName: newuser.userName, password: hashedPassword };
     
         //call local json server using POST method to submit data 
         fetch('http://localhost:9999/users/', {
@@ -71,6 +71,7 @@ io.on('connection', socket =>{
             console.log('A new user has been added successfully!')
         });
         })
+
 })
 
 // The server listens on port 4000
