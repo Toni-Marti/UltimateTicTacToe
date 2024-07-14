@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import bcrypt from 'bcryptjs';
 
+const socket = io('http://localhost:4000')
+
 function SignUp() {
 
     const [users, setUsers] = useState([]);
