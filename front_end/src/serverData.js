@@ -1,2 +1,2 @@
-let serverAddress = 'http://ultimate-ultimate-tic-tac-toe.tonimartal.com';
+let serverAddress = 'http://localhost';
 export const getServerAddress = () => serverAddress;

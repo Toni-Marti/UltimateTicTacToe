@@ -18,7 +18,7 @@ io.on('connection', socket =>{
 
     socket.on('generalChat', (username, password, eventType, event) => {
         console.log('New message in general chat from', username, ':', event)
-        io.emit('generalChat', username, event)
+        io.emit('generalChat', username, eventType, event)
     })
 
     socket.on('findRoom', (username, password) => {
@@ -32,8 +32,13 @@ io.on('connection', socket =>{
 
     function subscribeToRoom(roomNumber) {
         socket.on(roomNumber, (username, password, eventType, event) => {
-            console.log('Server received an event with the content: ', event);
-            io.emit(roomNumber, eventType, event);
+            if (eventType === EVENTTYPE.CHAT) {
+                console.log('New message in private chat in room', roomNumber, 'from', username, ':', event)
+                io.emit(roomNumber, username, eventType, event)
+            }
+            else if (eventType === EVENTTYPE.ACTION) {
+                io.emit(roomNumber, username, eventType, event);
+            }
         });
     }
 

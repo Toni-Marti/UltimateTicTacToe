@@ -23,8 +23,10 @@ function Chat({ roomId = 0 }) {
   // Each time the website is updated, we add
   // the new message with its user name to the chat
   useEffect(() => {
-    socket.on(communicationId, (userName, msg) => {
-      setChat([...chat, { userName, msg }]);
+    socket.on(communicationId, (userName, eventType, msg) => {
+      if (eventType === EVENTTYPE.CHAT){
+        setChat([...chat, { userName, msg }]);
+      }
     });
   });
 
