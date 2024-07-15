@@ -8,11 +8,11 @@ const io = require('socket.io')(server,{
     cors:{origin:'*',}
 })
 
+let rooms = [[1, 'paco'],[2, 'joseantonio'], [3, 'nico'], [4, 'hermana de nico'], [5, 'juancarlo']];
+
 // We log the messages and users received in the
 // console and broadcast them
 io.on('connection', socket =>{
-    let rooms = [[1, 'paco'],[2, 'joseantonio'], [3, 'nico'], [4, 'hermana de nico'], [5, 'juancarlo']];
-
     console.log('Connected')
 
     socket.on('generalChat', (username, password, eventType, event) => {
