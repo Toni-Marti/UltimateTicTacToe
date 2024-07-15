@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import './Lobby.css';
 import Chat from './Chat';
+import { getUsername } from './FrontendCommons';
+import './Lobby.css';
 
 // Room is an array that contains elements structured as:
 // [player_name, game_rules]
@@ -28,6 +29,7 @@ const Lobby = ({ rooms = [] }) => {
 
   return (
     <div>
+
       {/* Lobby */}
       <div className="lobby-container">
         <div className="lobby-box">
@@ -56,7 +58,18 @@ const Lobby = ({ rooms = [] }) => {
           </div>
         )}
       </div>
-        <Chat />
+
+      {/* User */}
+      <div className="user-container">
+        <div className="user-box">
+          <div className="user-info">
+            User name: 
+          </div>
+          {getUsername()}
+        </div>
+      </div>
+
+      <Chat />
     </div>
   );
 };
