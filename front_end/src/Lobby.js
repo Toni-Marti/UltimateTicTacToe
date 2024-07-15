@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
 import Chat from './Chat';
 import { getUsername, getPassword } from './FrontendCommons';
@@ -7,8 +7,6 @@ import { getServerAddress } from './serverData.js';
 import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from './popUps.js';
 import { useNavigate } from 'react-router-dom';
 
-
-const socket = io( getServerAddress() + ':4000' )
 
 // Room is an array that contains elements structured as:
 // [player_name, game_rules]
@@ -19,6 +17,39 @@ const Lobby = () => {
   const [showRejectionMessage, setShowRejectionMessage] = useState(false);
   const [selectedRoomIndex, setSelectedRoomIndex] = useState(null);
   const [rooms, setRooms] = useState([]);
+
+  // Initialize socket connection
+  const socket = io(getServerAddress() + ':4000', { autoConnect: false });
+
+  useEffect(() => {
+    // Connect socket when component mounts
+    socket.connect();
+
+    // Setup event listeners
+    const handleListRooms = (r) => {
+      setRooms(r);
+    };
+    socket.on('listRooms', handleListRooms);
+
+    const handleJoinRoom = (username, accepted) => {
+      if (accepted) {
+        let roomId = rooms[selectedRoomIndex][0];
+        navigate('/GamePage', { state: { roomId } });
+        setShowJoinMessage(false);
+      } else {
+        setShowJoinMessage(false);
+        setShowRejectionMessage(true);
+      }
+    };
+    socket.on('joinRoom', handleJoinRoom);
+
+    // Cleanup function to remove event listeners and disconnect socket when component unmounts
+    return () => {
+      socket.off('listRooms', handleListRooms);
+      socket.off('joinRoom', handleJoinRoom);
+      socket.disconnect();
+    };
+  }, [navigate, selectedRoomIndex, rooms]);
 
   const listRooms = () => {
     socket.emit('listRooms')
@@ -66,50 +97,44 @@ const Lobby = () => {
   };
 
   return (
-    <div>
+    <div className="Lobby">
 
-      {/* Lobby */}
-      <div className="lobby-container">
-        <div className="lobby-box">
-          <div>
-            <button className="player-block" onClick={handleCreateGameClick}>
-              <h2>Create game</h2>
-            </button>
-            <h1>Available rooms:</h1>
-            <button onClick={listRooms()}> Reload </button>
+      <div className="LobbyGrid">
+
+        <div className="Rooms">
+          <div className="RoomsHeader">
+            <h1 style={{textAlign:"center"}}>Available rooms: </h1>
+            <button onClick={listRooms()}> Reload rooms </button>
+          </div>
+          <div className="RoomList">
+            <button className="CreateGameButton" style={{fontSize:"x-large"}} onClick={handleCreateGameClick}><p>Create game</p></button>
             {rooms.map((room, index) => (
-              <button key={index} className="player-block" onClick={() => handlePlayerClick(index)}>
-                <h2>{room[0]}</h2>
-                <p>{room[1]}</p>
-              </button>
+            <button key={index} className="Room" onClick={() => handlePlayerClick(index)}>
+              <h2>{room[0]}</h2>
+              <p>{room[1]}</p>
+            </button>
             ))}
           </div>
         </div>
-        {showJoinMessage && (
-          <div>
-            <Overlay/>
-            <TwoButtonPopUp message={`Join room ${rooms[selectedRoomIndex][0]}`} negativeOnClick={() => handleNoClick()} positiveOnClick={() => handleYesClick()} className='message-box'/>
-          </div>
-        )}
-        {showRejectionMessage && (
-          <div>
-            <Overlay/>
-            <MessagePopUp message='The room is already full' onClick={() => setShowRejectionMessage(false)} className='message-box'/>
-          </div>
-        )}
+
+        <Chat />
+
       </div>
 
-      {/* User */}
-      <div className="user-container">
-        <div className="user-box">
-          <div className="user-info">
-            User name: 
-          </div>
-          {getUsername()}
+      {showJoinMessage && (
+        <div>
+          <Overlay/>
+          <TwoButtonPopUp message={`Join room ${rooms[selectedRoomIndex][0]}`} negativeOnClick={() => handleNoClick()} positiveOnClick={() => handleYesClick()} className='message-box'/>
         </div>
-      </div>
+      )}
 
-      <Chat />
+      {showRejectionMessage && (
+        <div>
+          <Overlay/>
+          <MessagePopUp message='The room is already full' onClick={() => setShowRejectionMessage(false)} className='message-box'/>
+        </div>
+      )}
+
     </div>
   );
 };

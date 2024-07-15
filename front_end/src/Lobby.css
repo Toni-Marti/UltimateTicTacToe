@@ -1,155 +1,33 @@
-/* Lobby */
-.lobby-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-left: 30px;
-  min-height: 100vh;
+.LobbyGrid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto 1fr;
 }
 
-.lobby-box {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  max-width: 600px;
-  width: 100%;
-  text-align: center;
+.CreateGameButton {
+  background: rgb(61, 175, 41);
 }
 
-.player-block {
-  display: block;
-  width: 100%;
-  background-color: #2f2f2f;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 20px 0;
-  padding: 20px;
-  text-align: center;
-  text-decoration: none;
-  transition: transform 0.3s, background-color 0.3s;
-  cursor: pointer;
-  border: none;
+.CreateGameButton:hover {
+  background: rgb(37, 120, 26);
 }
 
-.player-block:hover {
-  transform: translateY(-5px);
-  background-color: #e0e0e0;
+.Rooms {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  text-justify: center;
 }
 
-.player-block h2 {
-  margin: 0 0 10px;
-  font-size: 1.5em;
+.RoomList {
+  height: 75vh;
+  overflow-y: auto;
 }
 
-.player-block p {
-  margin: 0;
-  color: #555;
+.Room {
+  background: rgb(189, 189, 189);
+  color: black  ;
 }
 
-.join-message {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-}
-
-.message-box {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-}
-
-.message-box p {
-  font-size: 1.2em;
-  margin-bottom: 20px;
-}
-
-.join-button {
-  padding: 10px 20px;
-  margin: 0 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.no-button {
-  background-color: #dc3545;
-  color: #fff;
-}
-
-.yes-button {
-  background-color: #09b71d;
-  color: #fff;
-}
-
-.join-button:hover {
-  opacity: 0.8;
-}
-
-/* Chat */
-.chat-container {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-}
-
-.chat-box {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  max-width: 600px;
-  width: 100%;
-  text-align: center;
-  width: 300px;
-  height: 400px;
-  margin-top: 200px;
-}
-
-/* User */
-.user-container {
-  position: fixed;
-  top: -300px;
-  right: 0;
-  margin: 30px; /* Optional: to add some space from the edges */
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.user-box {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  max-width: 600px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.user-info {
-  font-size: 14px; 
-  font-weight: bold;
+.Room:hover {
+  background: rgb(255, 255, 255);
 }

@@ -7,7 +7,7 @@ import { EVENTTYPE } from './commonsSymbolicLink/socketUtils.js';
 
 const socket = io(getServerAddress() + ':4000');
 
-function Chat({ roomId = 0 }) {
+function Chat({className, roomId = 0 }) {
   // communicationId will be 'generalChat' or the number of the room
   // if we are in a private room
   let communicationId = 'generalChat';
@@ -49,29 +49,35 @@ function Chat({ roomId = 0 }) {
   // We display the form to enter the user name and
   // message, and display the chat with the message history
   return (
-    <div className="chat-container">
-      <div className="chat-box">
-        <div className="chatMsg">
-          {chat.map((myData, index) => (
-            <p className={`chatEntry ${myData.userName === getUsername() ? 'myMessage' : ''}`} key={index}>
-              <span className={`userName ${myData.userName === getUsername() ? 'myMessage' : ''}`}>{myData.userName}:</span>
-              <span className="msg">{myData.msg}</span>
-            </p>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-        <form onSubmit={send} className="chat">
-          <input
-            type="text"
-            required
-            placeholder="Message here..."
-            name="msg"
-            value={msg}
-            onChange={(e) => setMsg(e.target.value)}
-          />
-          <button type="submit">Send</button>
-        </form>
+    <div className={"Chat " + className}>
+
+      <div className='MessagesHeader'>
+        <h2 style={{textAlign:"center"}}>Chat: </h2>
       </div>
+
+      <div className="Messages">
+        {chat.map((myData, index) => (
+          <p className={"MessageEntry "  + (myData.userName === getUsername() ? 'MyMessage' : '')} key={index}>
+            <span className={"UserName"}>{myData.userName}</span>
+            <span className="msg">: {myData.msg}</span>
+          </p>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <form onSubmit={send} className="NewMessage">
+        <input
+          className='MessageInput'
+          type="text"
+          required
+          placeholder="Message here..."
+          name="msg"
+          value={msg}
+          onChange={(e) => setMsg(e.target.value)}
+        />
+        <button type="submit" className='SendButton'>Send</button>
+      </form>
+
     </div>
   );
 }

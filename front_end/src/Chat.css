@@ -1,80 +1,64 @@
-.chat-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-left: 30px;
-  min-height: 100vh;
+.Chat {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
-.chat-box {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  max-width: 600px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.MessagesHeader::after {
+  content: "";
+  display: block;
+  height: 3px; /* Height of the line */
+  background-color: black; /* Color of the line */
+  width: 80%; /* Adjust this value to control the width of the line */
+  margin: 0 auto; /* Centers the line horizontally */
 }
 
-.chatMsg {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-height: 400px;
+.Messages {
   overflow-y: auto;
+  overflow-x: hidden;
+  height: 70vh;
+  margin-left: 10px;
+  margin-top: 4px;
 }
 
-.chatEntry {
-  margin: 5px 0;
-}
-
-.userName {
-  font-weight: bold;
-}
-
-.userName.myMessage {
-  color: #0056b3;
-}
-
-.msg {
-  margin-left: 5px;
-}
-
-input[type="text"] {
-  width: calc(100% - 20px);
+.MessageEntry {
+  border: 3px solid black;
+  border-radius: 10px;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
+  max-width: calc(100% - 30px);
+  
 }
 
-button[type="submit"] {
-  width: calc(100% - 20px);
-  padding: 10px;
-  background-color: #007bff;
+.MyMessage {
+  background-color: #d500ff;
+  border: transparent;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 10px;
+
 }
 
-button[type="submit"]:hover {
-  background-color: #0056b3;
+.UserName {
+  font-weight: bolder;
 }
 
-form.chat {
-  width: 100%;
+.NewMessage:before {
+  content: "";
+  display: block;
+  height: 3px; /* Height of the line */
+  background-color: black; /* Color of the line */
+  width: 80%; /* Adjust this value to control the width of the line */
+  margin: 0 auto; /* Centers the line horizontally */
+}
+
+.MessageInput {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  bottom: 0;
+  margin: 0 auto;
+  margin: 10px;
+  padding: 10px;
+  width: calc(100% - 45px);
+}
+
+.SendButton {
+  display: flex;
+  margin: 0 auto;
+
+  /* width: calc(100% - 40px); */
 }
