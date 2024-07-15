@@ -12,7 +12,7 @@ const io = require('socket.io')(server,{
 // console and broadcast them
 io.on('connection', socket =>{
     let roomNumber = 0;
-    let rooms = [];
+    let rooms = [[1, 'paco'],[2, 'joseantonio'], [3, 'nico'], [4, 'hermana de nico'], [5, 'juancarlo']];
 
     console.log('Connected')
 
@@ -23,7 +23,7 @@ io.on('connection', socket =>{
 
     socket.on('createRoom', (username, password) => {
         roomNumber = roomNumber+1;
-        rooms.push(roomNumber);
+        rooms.push([roomNumber, username]);
         io.emit('createRoom', username, roomNumber)
         console.log('The user', username, 'created the room:', roomNumber)
 
@@ -31,13 +31,18 @@ io.on('connection', socket =>{
     })
 
     socket.on('joinRoom', (username, password, roomNumber) => {
-        if (rooms.includes(roomId)){
+        if (rooms.some(room => room[0] === roomNumber)){
             io.emit('joinRoom', username, true);
-            rooms.splice(rooms.indexOf(roomId), 1);
+            // It deletes the room with the id roomNumber
+            rooms = rooms.filter(room => room[0] !== roomNumber);
         }
         else {
             io.emit('joinRoom', username, false)
         }
+    })
+
+    socket.on('listRooms', () => {
+        io.emit('listRooms', rooms)
     })
 
     function subscribeToRoom(roomNumber) {
