@@ -103,7 +103,7 @@ const Lobby = () => {
 
         <div className="Rooms">
           <div className="RoomsHeader">
-            <h1 style={{textAlign:"center"}}>Available rooms: </h1>
+            <h1 style={{textAlign:"center"}}>Available rooms</h1>
             <button onClick={listRooms()}> Reload rooms </button>
           </div>
           <div className="RoomList">

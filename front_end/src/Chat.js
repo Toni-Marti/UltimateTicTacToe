@@ -52,7 +52,7 @@ function Chat({className, roomId = 0 }) {
     <div className={"Chat " + className}>
 
       <div className='MessagesHeader'>
-        <h2 style={{textAlign:"center"}}>Chat: </h2>
+        <h2 style={{textAlign:"center"}}>Chat</h2>
       </div>
 
       <div className="Messages">
