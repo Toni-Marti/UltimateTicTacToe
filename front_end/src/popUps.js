@@ -6,7 +6,7 @@ function Overlay () {
 
 function EmptyPopUp ({children, className}) {
     return (
-        <div className={"PopUp " + className}>
+        <div className={"EmptyPopUp " + className}>
             {children}
         </div>
     )
@@ -21,7 +21,7 @@ function MessagePopUp ({message="This is a message pop up :)", onClick=()=>null,
     )
 }
 
-function TwoButtonPopUp ({message="", negativeOnClick=()=>null, positiveOnClick=()=>null, negativeButtonText="No", positiveButtonText="Yes", className =""}) {
+function TwoButtonPopUp ({message="This is a two button pop up :)   ", negativeOnClick=()=>null, positiveOnClick=()=>null, negativeButtonText="No", positiveButtonText="Yes", className =""}) {
     return (
         <EmptyPopUp className={className}>
             <p>{message}</p>

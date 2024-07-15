@@ -1,4 +1,4 @@
-.PopUp {
+.Overlay {
     position: fixed;
     top: 0;
     right: 0;
@@ -9,4 +9,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.EmptyPopUp {
+    border: 1px solid #000000;
+    position: fixed;
+    z-index: 10000;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
