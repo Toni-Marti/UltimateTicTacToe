@@ -11,7 +11,6 @@ const io = require('socket.io')(server,{
 // We log the messages and users received in the
 // console and broadcast them
 io.on('connection', socket =>{
-    let roomNumber = 0;
     let rooms = [[1, 'paco'],[2, 'joseantonio'], [3, 'nico'], [4, 'hermana de nico'], [5, 'juancarlo']];
 
     console.log('Connected')
@@ -22,7 +21,10 @@ io.on('connection', socket =>{
     })
 
     socket.on('createRoom', (username, password) => {
-        roomNumber = roomNumber+1;
+        let roomNumber = 1;
+        while (rooms.some(room => room[0] === roomNumber)) {
+            roomNumber = roomNumber+1;
+        }
         rooms.push([roomNumber, username]);
         io.emit('createRoom', username, roomNumber)
         console.log('The user', username, 'created the room:', roomNumber)
