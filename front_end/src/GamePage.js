@@ -8,7 +8,7 @@ import Chat from './Chat.js'
 
 const socket = io( getServerAddress() + ':4000' )
 
-function GamePage(roomId)
+function GamePage({roomId})
 {
     
 

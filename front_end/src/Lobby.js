@@ -37,7 +37,8 @@ const Lobby = () => {
     socket.emit('joinRoom', getUsername(), getPassword(), rooms[selectedRoomIndex][0]);
     socket.on('joinRoom', (username, accepted) => {
       if (accepted) {
-        // MOVE TO address/Game with paremeter rooms[selectedRoomIndex][0])
+        // IMPLEMENT: Call GamePage with argument rooms[selectedRoomIndex][0])
+        
         setShowJoinMessage(false);
       }
       else {
@@ -48,6 +49,12 @@ const Lobby = () => {
   };
 
   const handleCreateGameClick = () => {
+    socket.emit('createRoom', getUsername(), getPassword());
+    socket.on('createRoom', (username, roomNumber) => {
+      if (username === getUsername()) {
+        // IMPLEMENT: Call GamePage with argument roomNumber
+      }
+    })
   };
 
   return (

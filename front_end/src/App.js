@@ -23,7 +23,7 @@ function App() {
           <Nav />
           <div>
           <Routes>
-            <Route path="/Lobby" element={<Lobby nPlayers={[["ExampleName1", "ExampleRules1"], ["ExampleName2", "ExampleRules2"]]} />}/>
+            <Route path="/Lobby" element={<Lobby />}/>
             <Route path="/Login" element={<Login />} />
             <Route path="/SignUp" element={<SignUp />} />
             <Route path="/GamePage" element={<GamePage />}/>
