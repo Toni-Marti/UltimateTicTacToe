@@ -5,12 +5,16 @@ import { getUsername, getPassword } from './FrontendCommons';
 import './Lobby.css';
 import { getServerAddress } from './serverData.js';
 import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from './popUps.js';
+import { useNavigate } from 'react-router-dom';
+
 
 const socket = io( getServerAddress() + ':4000' )
 
 // Room is an array that contains elements structured as:
 // [player_name, game_rules]
 const Lobby = () => { 
+  const navigate = useNavigate();
+
   const [showJoinMessage, setShowJoinMessage] = useState(false);
   const [showRejectionMessage, setShowRejectionMessage] = useState(false);
   const [selectedRoomIndex, setSelectedRoomIndex] = useState(null);
@@ -37,8 +41,10 @@ const Lobby = () => {
     socket.emit('joinRoom', getUsername(), getPassword(), rooms[selectedRoomIndex][0]);
     socket.on('joinRoom', (username, accepted) => {
       if (accepted) {
-        // IMPLEMENT: Call GamePage with argument rooms[selectedRoomIndex][0])
-        
+        let roomId = rooms[selectedRoomIndex][0];
+        // Go to GamePage
+        navigate('/GamePage', { state: { roomId } });
+
         setShowJoinMessage(false);
       }
       else {
@@ -52,7 +58,9 @@ const Lobby = () => {
     socket.emit('createRoom', getUsername(), getPassword());
     socket.on('createRoom', (username, roomNumber) => {
       if (username === getUsername()) {
-        // IMPLEMENT: Call GamePage with argument roomNumber
+        let roomId = roomNumber;
+        // Go to GamePage
+        navigate('/GamePage', { state: { roomId } });
       }
     })
   };
