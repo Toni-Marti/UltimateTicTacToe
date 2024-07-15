@@ -1,0 +1,42 @@
+.TextContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%; 
+  }
+
+.Bar {
+    display: grid;
+    position: relative;
+    height: 15px;
+    border: 2px solid black;
+}
+
+.Bar_NoBorder {
+    display: grid;
+    position: relative;
+    height: 15px;
+}
+
+.Loss {
+    background: #f28585;
+}
+
+.Draw {
+    background: #e899f7;
+}
+
+.Win {
+    background: #50acf2;
+}
+
+.LossPercentage {
+    color: #f23030;
+}
+
+.DrawPercentage {
+    color: #d500ff;
+}
+
+.WinPercentage {
+    color: #006fff;
+}
