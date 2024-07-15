@@ -14,7 +14,7 @@ function GamePage(roomId)
 
     return(
         <div style={{ display: 'flex' }}>
-            <GameR />
+            <GameR  />
             <div style={{ flex: 1 }}>
                 <Chat roomId={roomId} />
             </div>

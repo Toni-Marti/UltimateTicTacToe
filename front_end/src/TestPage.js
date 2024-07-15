@@ -16,12 +16,12 @@ function TestPage()
     const [eventType, setEventType] = useState(EVENTTYPE.NONE);
     const [event, setEvent] = useState('');
 
-    const findRoom = (e) => {
+    const createRoom = (e) => {
         e.preventDefault();
-        socket.emit('findRoom', getUsername(), getPassword())
+        socket.emit('createRoom', getUsername(), getPassword())
     };
 
-    socket.on('findRoom', (username, roomNumber) => {
+    socket.on('createRoom', (username, roomNumber) => {
         if (username === getUsername()){
             setRoomId(roomNumber);
         }
@@ -41,7 +41,7 @@ function TestPage()
             The username is: {getUsername()}
             <br/>
 
-            {roomId === -1 && (<button onClick={findRoom}> Find room </button>)}
+            {roomId === -1 && (<button onClick={createRoom}> Find room </button>)}
             {roomId !== -1 && (<div> Room number: {roomId} </div>)}
 
             <form onSubmit={sendEvent}>

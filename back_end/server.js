@@ -21,13 +21,23 @@ io.on('connection', socket =>{
         io.emit('generalChat', username, eventType, event)
     })
 
-    socket.on('findRoom', (username, password) => {
+    socket.on('createRoom', (username, password) => {
         roomNumber = roomNumber+1;
         rooms.push(roomNumber);
-        io.emit('findRoom', username, roomNumber)
-        console.log('The user', username, 'was added to the room:', roomNumber)
+        io.emit('createRoom', username, roomNumber)
+        console.log('The user', username, 'created the room:', roomNumber)
 
         subscribeToRoom(roomNumber);
+    })
+
+    socket.on('joinRoom', (username, password, roomNumber) => {
+        if (rooms.includes(roomId)){
+            io.emit('joinRoom', username, true);
+            rooms.splice(rooms.indexOf(roomId), 1);
+        }
+        else {
+            io.emit('joinRoom', username, false)
+        }
     })
 
     function subscribeToRoom(roomNumber) {
