@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Nav from './Nav';
 
-import "./Apps.css"
+import "./App.css"
 
 import { GameR } from './gameComponents';
 import GamePage from './GamePage';
