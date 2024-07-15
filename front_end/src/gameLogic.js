@@ -235,7 +235,6 @@ class Game {
     }
     
     /**
-     * 
      * @param {String} tile_address a succesion of numbers btween 1 and 9 indicating in 
      * which tile the player wants to mark. The the biggest figure digit
      * indicates which board the player wants to mark, the next one would indicate
@@ -333,6 +332,19 @@ class Game {
         }
 
         return false;
+    }
+
+    winerName() {
+        if (this.mainBoard.value === MARK.X) {
+            return this.player1;
+        }
+        else if (this.mainBoard.value === MARK.O) {
+            return this.player2;
+        }
+        else if ([MARK.XO, MARK.OX].includes(this.mainBoard.value)) {
+            return this.player1 + " and " + this.player2;
+        }
+        return null;
     }
 
     canClickOn(address) {

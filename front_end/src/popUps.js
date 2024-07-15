@@ -12,25 +12,24 @@ function EmptyPopUp ({children, className}) {
     )
 }
 
-function MessagePopUp ({message="This is a message pop up :)", onClick=()=>null, buttonText="Accept", className=""}) {
+function MessagePopUp ({children="This is a message pop up :)", onClick=()=>null, buttonText="Accept", className=""}) {
     return (
         <EmptyPopUp className={className}>
-            <p>{message}</p>
+            <p>{children}</p>
             <button onClick={onClick}>{buttonText}</button>
         </EmptyPopUp>
     )
 }
 
-function TwoButtonPopUp ({message="This is a two button pop up :)   ", negativeOnClick=()=>null, positiveOnClick=()=>null, negativeButtonText="No", positiveButtonText="Yes", className =""}) {
+function TwoButtonPopUp ({children="This is a two button pop up :)   ", negativeOnClick=()=>null, positiveOnClick=()=>null, negativeButtonText="No", positiveButtonText="Yes", className =""}) {
     return (
         <EmptyPopUp className={className}>
-            <p>{message}</p>
-            <div className='ButtonsContainer'>
-                <button className={negativeButtonText} onClick={negativeOnClick}>
+            <p>{children}</p>
+            <div className='TBPUButtonsContainer'>
+                <button className={"NegativeButton"} onClick={negativeOnClick}>
                     {negativeButtonText}
                 </button>
-                <div className='buttonSpacing'/>
-                <button className={negativeButtonText} onClick={positiveOnClick}>
+                <button className={"PositiveButton"} onClick={positiveOnClick}>
                     {positiveButtonText}
                 </button>
             </div>

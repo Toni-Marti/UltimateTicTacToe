@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MARK, Tile, Board, Rules, Game } from "./gameLogic";
-import PopUp from "./popUp";
+import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from "./popUps";
 import "./gameComponents.css";
 
 const white = "#FFFFFF";
@@ -32,14 +32,14 @@ function shouldBeCovered(address, game) {
     return game.canClickOn(address.slice(0, -1)) && !game.canClickOn(address)   ;
 }
 
-function tileColor(address, game) {
+function tileColor(address, game, force_dark = false) {
     let value = game.getValue(address);
 
     if (value === MARK.NONE) {
         return background_color;
     }
     else if ([MARK.XO, MARK.OX].includes(value)) {
-        if (game.isPartOfValidLine(address)) {
+        if (game.isPartOfValidLine(address) || force_dark) {
             return bouth_players_saturated_color;
         }
         else {
@@ -47,7 +47,7 @@ function tileColor(address, game) {
         }
     }
     else if (value === MARK.X) {
-        if (game.isPartOfValidLine(address)) {
+        if (game.isPartOfValidLine(address) || force_dark) {
             return player1_saturated_color;
         }
         else {
@@ -55,7 +55,7 @@ function tileColor(address, game) {
         }
     }
     else if (value === MARK.O) {
-        if (game.isPartOfValidLine(address)) {
+        if (game.isPartOfValidLine(address) || force_dark) {
             return player2_saturated_color;
         }
         else {
@@ -103,8 +103,9 @@ function BoardR({game, mark_function, hover_player, address = "", className = ""
     );
 }
 
-function GameR({size = [500, 500], isMyTyrn = true}) {
-    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules()));
+function GameR({size = ["500px", "500px"], isMyTyrn = true, is_online = false}) {
+    const [gameSt, setGameSt] = useState(new Game());
+    // const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules()));
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");
     const [hasShownWinner, setHasShownWinner] = useState(false);
@@ -170,8 +171,7 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
 
     return (
         <div className="Game">
-            <p>{gameSt.player1} vs {gameSt.player2}</p>
-            <span style={{fontWeight:"bold"}}>Debug mode</span>
+            {/* <span style={{fontWeight:"bold"}}>Debug mode</span>
             <input type="checkbox" id="debug_mode" checked={isDebugMode} onChange={() => debugModified(!isDebugMode)}/>
             {isDebugMode ? 
                 <div>
@@ -183,13 +183,20 @@ function GameR({size = [500, 500], isMyTyrn = true}) {
                 </div>
                 :
                 null
-            }
-            <div style={{width: size[0] + "px", height: size[1] + "px"}}>
+            } */}
+            <div style={{width: size[0], height: size[1]}}>
                 <BoardR game={gameSt} hover_player={hover_player} board={gameSt.mainBoard} mark_function={markTile} />
             </div>
             {showWinner 
-             ? <PopUp /> 
-             : null}
+            ? <div>
+                <Overlay/>
+                <MessagePopUp buttonText="OK" onClick={() => setHasShownWinner(true)}>
+                        <span style={{fontSize:"x-large"}}>
+                            <span style={{color:tileColor("", gameSt, true), fontWeight:"bold"}}>{gameSt.winerName()}</span> won the game!
+                        </span>
+                </MessagePopUp> 
+            </div>
+            : null}
         </div>
     );
 }
