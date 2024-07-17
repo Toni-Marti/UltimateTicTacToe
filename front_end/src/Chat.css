@@ -30,9 +30,8 @@
 
 .MyMessage {
   background-color: #d974ee;
-  border: transparent;
+  border: #d974ee;
   color: white;
-
 }
 
 .UserName {
