@@ -58,6 +58,7 @@
 }
 
 .SendButton {
+  justify-content: center;
   display: flex;
   margin: 0 auto;
 
