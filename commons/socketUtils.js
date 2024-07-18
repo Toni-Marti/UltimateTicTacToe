@@ -23,4 +23,4 @@ class SocketEvent {
 }
 */
 
-module.exports = { EVENTTYPE };
+export { EVENTTYPE };

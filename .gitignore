@@ -4,4 +4,6 @@ back_end/node_modules
 front_end/build
 front_end/src/serverData.js
 
+back_end/db.json
+
 .vscode
