@@ -12,23 +12,26 @@ function Login()
 {
     
     const [users, setUsers] = useState([]);
-    const [message, setMessage] = useState('');
     const [pw, setPw] = useState("");
-    const [un, setUn] = useState(""); 
+    const [un, setUn] = useState("");
+    const [message, setMessage] = useState("");
 
     const send = (e) => {
-        e.preventDefault();
-        socket.emit('verifyId', {un,pw})
+        e.preventDefault()
+        socket.emit('login', {un, pw})
       };
     
     socket.on('loginSuccess', data => {
-        setUsername(data.userName)
-        setPassword(pw)
+        console.log("Hello")
         setMessage(data.message)
+        setUsername(un)
+        setPassword(pw)
         console.log(data.message)
     });
-    socket.on('loginFailed', message => {
-        setMessage(message)
+    socket.on('loginFailed', data => {
+        setUsername('guest')
+        setPassword('')
+        setMessage(data.message)
     });
     
     useEffect(() => {

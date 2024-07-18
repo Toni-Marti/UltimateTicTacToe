@@ -12,10 +12,10 @@ const socket = io( getServerAddress() + ':4000' )
 
 function GamePage()
 {
+
     // Get parameter roomId
     const location = useLocation();
     const { roomId } = location.state || { roomId: 0 };
-
 
     return(
         <div style={{ display: 'flex' }}>

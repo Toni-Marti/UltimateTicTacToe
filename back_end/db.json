@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "1234",
       "password": "$2b$10$09P2ikHSqulhqUvescFOVu/9Km2Et3YpGs1ijDrwPRfKnrdGKveBu",
       "gameStats": {
@@ -11,7 +11,7 @@
       }
     },
     {
-      "id": 2,
+      "id": "2",
       "username": "1234",
       "password": "$2b$10$k45T3nfiv3d41ppRnuIoXeGJ5kH6QZ6lZ5R8FCWmV3vtn2JoUipem",
       "gameStats": {
@@ -21,9 +21,29 @@
       }
     },
     {
-      "id": 3,
+      "id": "3",
       "username": "1234",
       "password": "$2b$10$Fy6U5Rpv/.uK15bdDlsxCOrdV2RxvzkUsHzKOhETqKUe6Z8NChfMW",
+      "gameStats": {
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
+    },
+    {
+      "id": 4,
+      "username": "TestUser",
+      "password": "$2b$10$TDtkcsoT0q9jnUW0tpZ9tOVT4JH3NVcAdQ7plLo1vjBHH0.YW0jie",
+      "gameStats": {
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
+    },
+    {
+      "id": 5,
+      "username": "Helloworld",
+      "password": "$2b$10$Q0B0LmEvi.lj0PsMDhSa.eh51VOFNcrqxO1utrLo2vZbsb7tSu4nq",
       "gameStats": {
         "wins": 0,
         "losses": 0,

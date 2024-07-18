@@ -59,93 +59,225 @@ io.on('connection', socket =>{
         });
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async function hashPassword(pw) {
+            //hash the password
+            const hashedPassword = await bcrypt.hash(String(pw), 10);
+            return hashedPassword;
+    }
+
+    async function fetchUsers() {
+        let users = [];
+        try {
+            const response = await fetch('http://localhost:9999/users/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log("Response status:", response.status);
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+    
+            users = Array.isArray(data) ? data : [];
+            // Console log to ensure that use-effect is working properly
+            console.log("If Printed, users were loaded.");
+        } catch (error) {
+            console.log('Error fetching users:', error);
+        }
+        return users;
+    }
+    
+
+    //verify user
+    async function verifyCredentials(un, pw) {
+        let verified = false
+        let users = await fetchUsers();
+        hashedPassword = hashPassword(pw)
+        foundUser = users.some(u => u.username === un)
+        if (foundUser) {
+            const thisuser = users.find(u => u.username === un);
+            const passwordMatch = await bcrypt.compare(user.pw, thisuser.password); // Compare the passwords
+            if (passwordMatch){
+                verified = true
+            }
+        }
+        
+        
+        return verified;        
+    }
+
+    //account creation: verify valid user info input
+    async function validCredentials(un, pw, checkpw) {
+        let message = "";
+        let validpass = false;
+        let validuser = false;
+        let users = await fetchUsers();
+        let foundUser = users.some(user => user.username === un);
+    
+        // Check username
+        if (un.length >= 3 && un.length <= 20 && /^[a-zA-Z0-9_.]+$/.test(un) && !foundUser) {
+            validuser = true;
+        } else {
+            message = message + "Username is invalid. "
+            if (foundUser) {
+                message = message + "Username is already taken. ";
+            } else {
+                message = message + "Username must be 3-20 characters long and can only contain alphanumeric characters, underscores, and periods. ";
+            }
+        }
+        
+        let samePass = pw === checkpw;
+        let underEightChar = pw.length >= 8
+        let pwCharVerified = (
+            /[A-Z]/.test(pw) && 
+            /[a-z]/.test(pw) && 
+            /\d/.test(pw) && 
+            /[^A-Za-z0-9]/.test(pw) &&
+            !(/\s/.test(pw))
+        )
+
+        // Check password
+        if (
+            samePass &&
+            underEightChar &&
+            pwCharVerified
+        ) {
+            validpass = true;
+        } 
+        else {
+            message = message + "Password is invalid. "
+            if (!samePass) {
+                message = message + "Passwords do not match. "
+            }
+            if (!(pwCharVerified & underEightChar))
+            {
+                message = message + "It must be at least 8 characters, contain an uppercase letter, a lowercase letter, a number, and a special character. ";
+            }
+        }
+    
+        if (validuser && validpass) {
+            message = "";
+        }
+        
+        console.log(message)
+        return { validuser, validpass, message };
+    }
+
+    //signup
     socket.on('signUp', async (newuser) => {
         console.log('Connected')
 
-        let users = []
-        try {
-            const response = await fetch('http://localhost:9999/users/');
-            const data = await response.json();
+        let { validuser, validpass, message } =  await validCredentials(newuser.un, newuser.pw, newuser.checkpw)
+
+        console.log({validuser})
+        console.log({validpass})
+        console.log({message})
+
+        if (validuser & validpass) {
+            const users = await fetchUsers();
+            //take the previous
+            const highestUserId = users.length > 0 ? Math.max(...users.map(user => parseInt(user.id))) : 0;
+            const newUserId = highestUserId + 1;
             
-            users = data;
-            //console log to insure that use-effect is working properly
-            console.log("If Printed, users were loaded.")
-        } 
-        catch (error) {
-            console.error('Error fetching users:', error);
+            //hash the password
+            const hashedPassword = await hashPassword(newuser.pw)
+            
+            //initialize game statistics
+            const gameStats = {wins: 0, losses: 0, ties: 0}
+
+            //create the array that will be used to insert into json
+            const newUserObj = { id: parseInt(newUserId, 10), username: newuser.un, password: hashedPassword, gameStats: gameStats };
+            
+            //call local json server using POST method to submit data 
+            fetch('http://localhost:9999/users/', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newUserObj)
+            }).then(() => {
+                //debugging message
+                io.emit('signupSuccess', { message });
+            });
+        }
+        else {
+            io.emit('signupFailed', { message });
         }
         
-        //take the previous
-        const highestUserId = users.length > 0 ? Math.max(...users.map(user => parseInt(user.id))) : 0;
-        const newUserId = highestUserId + 1;
-        
-        //hash the password
-        const hashedPassword = await bcrypt.hash(String(newuser.pw), 10);
-        
-        //initialize game statistics
-        const gameStats = {wins: 0, losses: 0, ties: 0}
-
-        //create the array that will be used to insert into json
-        const newUserObj = { id: parseInt(newUserId, 10), username: newuser.un, password: hashedPassword, gameStats: gameStats };
-        
-
-        //call local json server using POST method to submit data 
-        fetch('http://localhost:9999/users/', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newUserObj)
-        }).then(() => {
-            //debugging message
-            console.log('A new user has been added successfully!')
-        });
-        })
-
-        // Handle user login
-        socket.on('verifyId', async (user) => {
-            console.log('Server received:', user);
-
-            let users = [];
-            try {
-                const response = await fetch('http://localhost:9999/users/');
-                const data = await response.json();
-                
-                users = data;
-                //console log to ensure that users were loaded
-                console.log("If Printed, users were loaded.");
-            } 
-            catch (error) {
-                console.error('Error fetching users:', error);
-            }
-
-            const foundUser = users.find(u => u.username === user.un);
-            
-            let message = ""
-
-            if (foundUser) {
-                const isPasswordMatch = await bcrypt.compare(String(user.pw), foundUser.password);
-                if (isPasswordMatch) {
-                    message = "Logged In!"
-                    console.log(message)
-                    io.emit('loginSuccess', {
-                        id: foundUser.id,
-                        username: foundUser.username,
-                        gameStats: foundUser.gameStats,
-                        message: message
-                    });
-                } else {
-                    message = 'Incorrect password'
-                    console.log(message)
-                    io.emit('loginFailed', message );
-                }
-            } 
-            else {
-                message = 'User not found'
-                console.log(message)
-                io.emit('loginFailed', message);
-            }
-
     })
+
+    // Handle user login
+    socket.on('login', async (user) => {
+        console.log('Server received user:', user);
+
+        let message = ""
+        const verified = verifyCredentials(user.username)
+        
+        if (verified) {
+            message = "Logged In! "
+            console.log(message)
+            let users = await fetchUsers();
+
+            console.log(users)
+
+            console.log(user.un)
+
+            let foundUser = users.find(u => u.username === user.un);
+            
+            console.log(foundUser)
+
+            io.emit('loginSuccess', {
+                id: foundUser.id,
+                username: foundUser.username,
+                gameStats: foundUser.gameStats,
+                message: message,
+            });
+            
+            console.log("Hello")
+        } 
+        else {
+            message = 'Username or Password is incorrect.'
+            console.log(message)
+            io.emit('loginFailed',{ message });
+        }
+    })
+    socket.on('logout', async () => {
+        logout();
+    })
+
 })
+
+//invalid credentials
+function forceLogout() {
+    const errorMessage = "Invalid credentials."
+    console.log(errorMessage)
+    io.emit('forceLogout', errorMessage);
+    logout();
+}
+
+//logout
+function logout() {
+    const message = "You have been logged out.";
+    console.log(message);
+    io.emit('logout', { message });
+}
+
 
 // The server listens on port 4000
 server.listen(4000,()=>{
