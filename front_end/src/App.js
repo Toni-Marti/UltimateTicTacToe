@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -13,15 +13,25 @@ import Login from './Login';
 import SignUp from './SignUp';
 import TestPage from './TestPage';
 import Chat from './Chat.js';
-import { getUsername } from './FrontendCommons.js';
+import { getUsername, subscribe } from './FrontendCommons.js';
 
 
 function App() {
+
+  const [username, setUsername] = useState(getUsername());
+  
+
+  useEffect(() => {
+    const unsubscribe = subscribe(setUsername);
+    return unsubscribe;
+  }, []);
+
+
   return (
     
     <Router>
         <div className='App'>
-          <h1>Welcome {getUsername()}</h1>
+          <h1>Welcome {username}</h1>
           <Nav />
           <div>
           <Routes>

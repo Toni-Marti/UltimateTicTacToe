@@ -246,8 +246,10 @@ io.on('connection', socket =>{
                 id: foundUser.id,
                 username: foundUser.username,
                 gameStats: foundUser.gameStats,
-                message: message
+                message: message,
             });
+            
+            console.log("Hello")
         } 
         else {
             message = 'Username or Password is incorrect.'

@@ -22,14 +22,15 @@ function Login()
       };
     
     socket.on('loginSuccess', data => {
+        console.log("Hello")
         setMessage(data.message)
         setUsername(un)
         setPassword(pw)
         console.log(data.message)
     });
     socket.on('loginFailed', data => {
-        setUsername()
-        setPassword()
+        setUsername('guest')
+        setPassword('')
         setMessage(data.message)
     });
     
