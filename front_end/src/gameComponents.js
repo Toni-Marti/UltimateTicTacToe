@@ -104,8 +104,13 @@ function BoardR({game, mark_function, hover_player, address = "", className = ""
 }
 
 function GameR({size = ["500px", "500px"], isMyTyrn = true, is_online = false}) {
+    // CLASIC tic tac toe
     // const [gameSt, setGameSt] = useState(new Game());
-    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules()));
+    // CLASIC ultimate tic tac toe
+    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Board(), new Board(),new Board(),new Board(),new Board(),new Board(),new Board(),new Board()])));
+    // TEST board
+    // const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules()));
+    
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");
     const [hasShownWinner, setHasShownWinner] = useState(false);
