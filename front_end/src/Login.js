@@ -6,9 +6,7 @@ import {getUsername, setUsername, getPassword, setPassword} from './FrontendComm
 import { getServerAddress } from './serverData.js'
 
 
-const socket = io( getServerAddress() + ':4000' )
-
-function Login()
+function Login({socket})
 {
     
     const [users, setUsers] = useState([]);
@@ -19,27 +17,28 @@ function Login()
     const send = (e) => {
         e.preventDefault()
         socket.emit('login', {un, pw})
-      };
+    };
     
-    socket.on('loginSuccess', data => {
-        console.log("Hello")
-        setMessage(data.message)
-        setUsername(un)
-        setPassword(pw)
-        console.log(data.message)
-    });
-    socket.on('loginFailed', data => {
-        setUsername('guest')
-        setPassword('')
-        setMessage(data.message)
-    });
     
     useEffect(() => {
+        socket.on('loginSuccess', data => {
+            console.log("Hello")
+            setMessage(data.message)
+            setUsername(un)
+            setPassword(pw)
+            console.log(data.message)
+        });
+        socket.on('loginFailed', data => {
+            setUsername('guest')
+            setPassword('')
+            setMessage(data.message)
+        });
         //clean up socket listener when component unmounts
         return () => {
             socket.off('loginSuccess');
+            socket.off('loginFailed');
         };
-    });
+    },  []);
 
     return(
         <div className='Login'>

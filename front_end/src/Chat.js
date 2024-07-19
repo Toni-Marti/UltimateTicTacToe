@@ -1,15 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
 import { getUsername, getPassword } from './FrontendCommons.js';
-import { getServerAddress } from './serverData.js';
-import './Chat.css';
 import { EVENTTYPE } from './commonsSymbolicLink/socketUtils.js';
+import './Chat.css';
 
-const socket = io(getServerAddress() + ':4000');
-
-function Chat({className, roomId = 0 }) {
-  // communicationId will be 'generalChat' or the number of the room
-  // if we are in a private room
+function Chat({className, socket, roomId = 0}) {
   let communicationId = 'generalChat';
   if (roomId !== 0) {
     communicationId = roomId;
@@ -18,6 +12,7 @@ function Chat({className, roomId = 0 }) {
   // Variables for saving the message and message list
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
+  const [previousComID, setPreviousComID] = useState(communicationId);
   const messagesEndRef = useRef(null);
 
   // Each time the website is updated, we add
@@ -28,7 +23,12 @@ function Chat({className, roomId = 0 }) {
         setChat([...chat, { userName, msg }]);
       }
     });
-  });
+
+    return () => {
+      socket.off(previousComID);
+      setPreviousComID(communicationId);
+    };
+  }, [communicationId]);
 
   useEffect(() => {
     scrollToBottom();

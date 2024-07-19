@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client'
-import {EVENTTYPE} from './commonsSymbolicLink/socketUtils.js'
 import {getUsername, getPassword} from './FrontendCommons.js'
-import { getServerAddress } from './serverData.js'
 import { GameR } from './gameComponents.js'
 import Chat from './Chat.js'
 import { useLocation } from 'react-router-dom';
 
 
-const socket = io( getServerAddress() + ':4000' )
 
-function GamePage()
+function GamePage({socket})
 {
 
     // Get parameter roomId
@@ -24,7 +20,7 @@ function GamePage()
                 <GameR  />
             </div>
             <div style={{ flex: 1 }}>
-                <Chat roomId={roomId} />
+                <Chat roomId={roomId} socket={socket}/>
             </div>
         </div>
     );

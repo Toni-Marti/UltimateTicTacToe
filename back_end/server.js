@@ -10,10 +10,17 @@ const io = require('socket.io')(server,{
 
 let rooms = [[1, 'paco'],[2, 'joseantonio'], [3, 'nico'], [4, 'hermana de nico'], [5, 'juancarlo']];
 
+
+async function hashPassword(pw) {
+    //hash the password
+    const hashedPassword = await bcrypt.hash(String(pw), 10);
+    return hashedPassword;
+}
+
 // We log the messages and users received in the
 // console and broadcast them
 io.on('connection', socket =>{
-    console.log('Connected')
+    console.log('New conection on the server')
 
     socket.on('generalChat', (username, password, eventType, event) => {
         console.log('New message in general chat from', username, ':', event)
@@ -73,11 +80,6 @@ io.on('connection', socket =>{
 
 
 
-    async function hashPassword(pw) {
-            //hash the password
-            const hashedPassword = await bcrypt.hash(String(pw), 10);
-            return hashedPassword;
-    }
 
     async function fetchUsers() {
         let users = [];
@@ -112,14 +114,14 @@ io.on('connection', socket =>{
         let users = await fetchUsers();
         hashedPassword = hashPassword(pw)
         foundUser = users.some(u => u.username === un)
+
         if (foundUser) {
             const thisuser = users.find(u => u.username === un);
             const passwordMatch = await bcrypt.compare(user.pw, thisuser.password); // Compare the passwords
-            if (passwordMatch){
+            if (passwordMatch) {
                 verified = true
             }
         }
-        
         
         return verified;        
     }

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Room is an array that contains elements structured as:
 // [player_name, game_rules]
-const Lobby = () => { 
+function Lobby({socket}) { 
   const navigate = useNavigate();
 
   const [showJoinMessage, setShowJoinMessage] = useState(false);
@@ -18,19 +18,11 @@ const Lobby = () => {
   const [selectedRoomIndex, setSelectedRoomIndex] = useState(null);
   const [rooms, setRooms] = useState([]);
 
-  // Initialize socket connection
-  const socket = io(getServerAddress() + ':4000', { autoConnect: false });
-
   useEffect(() => {
-    // Connect socket when component mounts
-    socket.connect();
-
-    // Setup event listeners
     const handleListRooms = (r) => {
       setRooms(r);
     };
-    socket.on('listRooms', handleListRooms);
-
+    
     const handleJoinRoom = (username, accepted) => {
       if (accepted) {
         let roomId = rooms[selectedRoomIndex][0];
@@ -41,22 +33,30 @@ const Lobby = () => {
         setShowRejectionMessage(true);
       }
     };
+
+    const handleCreateRoom = (username, roomNumber) => {
+      if (username === getUsername()) {
+        let roomId = roomNumber;
+        // Go to GamePage
+        navigate('/GamePage', { state: { roomId } });
+      }
+    };
+
+    socket.on('listRooms', handleListRooms);
     socket.on('joinRoom', handleJoinRoom);
+    socket.on('createRoom', handleCreateRoom)
 
     // Cleanup function to remove event listeners and disconnect socket when component unmounts
     return () => {
       socket.off('listRooms', handleListRooms);
       socket.off('joinRoom', handleJoinRoom);
-      socket.disconnect();
+      socket.off('createRoom', handleCreateRoom);
     };
-  }, [navigate, selectedRoomIndex, rooms]);
+  }, []);
 
   const listRooms = () => {
-    socket.emit('listRooms')
+    socket.emit('listRooms');
   };
-  socket.on('listRooms', (r) => {
-    setRooms(r);
-  })
 
   const handlePlayerClick = (index) => {
     setSelectedRoomIndex(index);
@@ -70,30 +70,10 @@ const Lobby = () => {
 
   const handleYesClick = () => {
     socket.emit('joinRoom', getUsername(), getPassword(), rooms[selectedRoomIndex][0]);
-    socket.on('joinRoom', (username, accepted) => {
-      if (accepted) {
-        let roomId = rooms[selectedRoomIndex][0];
-        // Go to GamePage
-        navigate('/GamePage', { state: { roomId } });
-
-        setShowJoinMessage(false);
-      }
-      else {
-        setShowJoinMessage(false);
-        setShowRejectionMessage(true);
-      }
-    })
   };
 
   const handleCreateGameClick = () => {
     socket.emit('createRoom', getUsername(), getPassword());
-    socket.on('createRoom', (username, roomNumber) => {
-      if (username === getUsername()) {
-        let roomId = roomNumber;
-        // Go to GamePage
-        navigate('/GamePage', { state: { roomId } });
-      }
-    })
   };
 
   return (
@@ -117,7 +97,7 @@ const Lobby = () => {
           </div>
         </div>
 
-        <Chat />
+        <Chat socket={socket}/>
 
       </div>
 

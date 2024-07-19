@@ -4,37 +4,46 @@ import {EVENTTYPE} from './commonsSymbolicLink/socketUtils.js'
 import {getUsername, setUsername, getPassword, setPassword} from './FrontendCommons.js'
 import { getServerAddress } from './serverData.js'
 
-const socket = io( getServerAddress() + ':4000' )
-
-function TestPage()
+function TestPage({socket})
 {
     // SERVER.JS (THIS CODE IS TEMPORAL AND ONLY TO TEST SERVER.JS)
 
     setUsername('paco')
 
     const [roomId, setRoomId] = useState(-1);
+    const [prevRoomId, setPrevRoomId] = useState(roomId);
     const [eventType, setEventType] = useState(EVENTTYPE.NONE);
     const [event, setEvent] = useState('');
+
+
+    useEffect(() => {
+        socket.on('createRoom', (username, roomNumber) => {
+            if (username === getUsername()){
+                setRoomId(roomNumber);
+            }
+        })
+
+        socket.on(roomId, (eventType, event) => {
+            console.log("eventType: ", eventType, "event: ", event)
+        })
+
+        return () => {
+            socket.off('createRoom');
+            socket.off(prevRoomId);
+            setPrevRoomId(roomId);
+        }
+    }, [roomId]);
+
 
     const createRoom = (e) => {
         e.preventDefault();
         socket.emit('createRoom', getUsername(), getPassword())
     };
 
-    socket.on('createRoom', (username, roomNumber) => {
-        if (username === getUsername()){
-            setRoomId(roomNumber);
-        }
-    })
-
     const sendEvent = (e) => {
         e.preventDefault();
         socket.emit(roomId, getUsername(), getPassword(), eventType, event)
     };
-
-    socket.on(roomId, (eventType, event) => {
-        console.log("eventType: ", eventType, "event: ", event)
-    })
 
     return(
         <div>

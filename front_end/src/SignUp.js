@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client'
-import { getServerAddress } from './serverData.js'
 
-const socket = io( getServerAddress() + ':4000' )
-
-function SignUp() {
+function SignUp({socket}) {
     
     const [message, setMessage] = useState("");
     const [checkpw, setCheckPw] = useState("");
@@ -15,15 +11,21 @@ function SignUp() {
         e.preventDefault();
         socket.emit('signUp',{un,pw,checkpw})
         console.log('Emitted')
-      };
+    };
     
-    socket.on('signupSuccess', data => {
-        setMessage(data.message)
-        console.log(data.message)
-    });
-    socket.on('signupFailed', data => {
-        setMessage(data.message)
-    });
+    useEffect(() => {
+        socket.on('signupSuccess', data => {
+            setMessage(data.message)
+            console.log(data.message)
+        });
+        socket.on('signupFailed', data => {
+            setMessage(data.message)
+        });
+        return () => {
+            socket.off('signupSuccess');
+            socket.off('signupFailed');
+        }
+    }, []);
     
 
     return(
