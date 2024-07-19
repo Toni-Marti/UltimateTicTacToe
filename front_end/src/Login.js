@@ -30,8 +30,6 @@ function Login({socket, changePage})
             console.log(data.message)
         });
         socket.on('loginFailed', data => {
-            setUsername('guest')
-            setPassword('')
             setMessage(data.message)
         });
         //clean up socket listener when component unmounts

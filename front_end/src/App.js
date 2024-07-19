@@ -41,8 +41,10 @@ function App() {
   
     // Cleanup function to run when the component unmounts
     return () => {
-      console.log("Disconnecting from server");
-      socket.disconnect();
+      socket.off('connect');
+      socket.off('disconnect');
+      //console.log("Disconnecting from server");
+      //socket.disconnect();
     };
   }, []);
 
