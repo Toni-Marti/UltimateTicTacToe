@@ -20,7 +20,7 @@ function Chat({className, socket, roomId = 0}) {
   useEffect(() => {
     socket.on(communicationId, (userName, eventType, msg) => {
       if (eventType === EVENTTYPE.CHAT){
-        setChat([...chat, { userName, msg }]);
+        setChat(prevChat => [...prevChat, { userName, msg }]);
       }
     });
 
