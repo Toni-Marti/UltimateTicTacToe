@@ -1,6 +1,6 @@
 .LobbyGrid {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 2fr 1fr;
   grid-template-rows: auto 1fr;
 }
 
@@ -16,10 +16,12 @@
   display: grid;
   grid-template-rows: auto 1fr;
   text-justify: center;
+  
+  border-right: 2px solid black;
 }
 
 .RoomList {
-  height: 75vh;
+  height: calc(100vh - 210px);
   overflow-y: auto;
 }
 

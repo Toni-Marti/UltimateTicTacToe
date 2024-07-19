@@ -5,6 +5,7 @@ import { getUsername, getPassword } from './FrontendCommons';
 import './Lobby.css';
 import { getServerAddress } from './serverData.js';
 import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from './popUps.js';
+import { PAGES } from './App.js';
 
 
 // Room is an array that contains elements structured as:

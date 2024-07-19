@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import "./FormPage.css"
+import { PAGES } from './App.js';
 
-function SignUp({socket}) {
+
+function SignUp({socket, changePage}) {
     
     const [message, setMessage] = useState("");
     const [checkpw, setCheckPw] = useState("");
@@ -29,9 +32,8 @@ function SignUp({socket}) {
     
 
     return(
-        <div className='SignUp'>
-            <h1>Sign-Up:</h1>
-            <p>{message}</p>
+        <div className='SignUp FormPage'>
+            <h1>Sign Up:</h1>
             <form onSubmit={send} className="chat">
                 <input
                     type="text"
@@ -56,6 +58,7 @@ function SignUp({socket}) {
                 />
                 <button type="submit">Sign Up</button>
             </form>
+            <p style={{ textAlign: 'center' }}>Already have a user? <span className='link' onClick={() => changePage(PAGES.LOGIN)}>Log In</span></p>
         </div>
     );
 }

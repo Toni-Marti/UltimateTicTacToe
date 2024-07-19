@@ -11,8 +11,15 @@
 #title {
     font-size: x-large;
     font-weight: bolder;
+    cursor: pointer;
 }
 
 #userPart {
     float: right;
+    white-space: nowrap;
+    cursor: default;
+}
+
+#changeUser {
+    cursor: pointer;
 }

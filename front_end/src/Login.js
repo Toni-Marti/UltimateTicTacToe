@@ -4,11 +4,12 @@ import io from 'socket.io-client'
 import {Credentials, EVENTTYPE, SocketEvent} from './commonsSymbolicLink/socketUtils.js'
 import {getUsername, setUsername, getPassword, setPassword} from './FrontendCommons.js'
 import { getServerAddress } from './serverData.js'
+import "./FormPage.css"
+import { PAGES } from './App.js';
 
 
-function Login({socket})
+function Login({socket, changePage})
 {
-    
     const [users, setUsers] = useState([]);
     const [pw, setPw] = useState("");
     const [un, setUn] = useState("");
@@ -41,9 +42,8 @@ function Login({socket})
     },  []);
 
     return(
-        <div className='Login'>
-            <h1>Login:</h1>
-            <h1>{message}</h1>
+        <div className='Login FormPage'>
+            <h1>Log In:</h1>
             <form onSubmit={send} className="chat">
                 <input
                     type="text"
@@ -61,6 +61,7 @@ function Login({socket})
                 />
                 <button type="submit">Login</button>
             </form>
+            <p style={{ textAlign: 'center' }}>Don't have a user? <span className='link' onClick={() => changePage(PAGES.SIGNUP)}>Sing Up</span></p>
         </div>
     );
 }

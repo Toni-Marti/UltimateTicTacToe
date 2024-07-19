@@ -49,15 +49,15 @@ function App() {
   function renderPage(page, socket) {
     switch (page) {
       case PAGES.LOBBY:
-        return <Lobby socket={socket} />;
+        return <Lobby socket={socket} changePage={setPage}/>;
       case PAGES.LOGIN:
-        return <Login socket={socket} />;
+        return <Login socket={socket} changePage={setPage}/>;
       case PAGES.SIGNUP:
-        return <SignUp socket={socket} />;
+        return <SignUp socket={socket} changePage={setPage}/>;
       case PAGES.GAMEPAGE:
-        return <GamePage socket={socket} />;
+        return <GamePage socket={socket} changePage={setPage}/>;
       case PAGES.TEST:
-        return <TestPage socket={socket} />;
+        return <TestPage socket={socket}/>;
       default:
         return null; // or a default page
     }
