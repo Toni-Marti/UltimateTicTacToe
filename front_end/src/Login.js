@@ -1,19 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client'
-import {Credentials, EVENTTYPE, SocketEvent} from './commonsSymbolicLink/socketUtils.js'
-import {getUsername, setUsername, getPassword, setPassword} from './FrontendCommons.js'
-import { getServerAddress } from './serverData.js'
-import "./FormPage.css"
+import { Overlay, MessagePopUp } from './popUps.js';
 import { PAGES } from './App.js';
 
+import "./FormPage.css"
 
-function Login({socket, changePage})
-{
-    const [users, setUsers] = useState([]);
+
+function Login({socket, changePage, setUserName, setPassword}) {
     const [pw, setPw] = useState("");
     const [un, setUn] = useState("");
     const [message, setMessage] = useState("");
+    const [changePageAfterPopUp, setChangePageAfterPopUp] = useState(false);
 
     const send = (e) => {
         e.preventDefault()
@@ -23,11 +20,10 @@ function Login({socket, changePage})
     
     useEffect(() => {
         socket.on('loginSuccess', data => {
-            console.log("Hello")
-            setMessage(data.message)
-            setUsername(un)
+            setUserName(un)
             setPassword(pw)
-            console.log(data.message)
+            setMessage("Successfully loged in!")
+            setChangePageAfterPopUp(true);
         });
         socket.on('loginFailed', data => {
             setMessage(data.message)
@@ -37,7 +33,7 @@ function Login({socket, changePage})
             socket.off('loginSuccess');
             socket.off('loginFailed');
         };
-    },  []);
+    },  [un, pw]);
 
     return(
         <div className='Login FormPage'>
@@ -60,6 +56,16 @@ function Login({socket, changePage})
                 <button type="submit">Login</button>
             </form>
             <p style={{ textAlign: 'center' }}>Don't have a user? <span className='link' onClick={() => changePage(PAGES.SIGNUP)}>Sing Up</span></p>
+            {message != "" && <>
+                <Overlay />
+                <MessagePopUp children={message} onClick={() => {
+                    setMessage("")
+                    if(changePageAfterPopUp){
+                        changePage(PAGES.LOBBY);
+                        setChangePageAfterPopUp(false);
+                    }
+                    }} />
+            </>}
         </div>
     );
 }

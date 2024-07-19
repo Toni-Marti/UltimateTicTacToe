@@ -12,7 +12,6 @@ let rooms = [[1, 'paco'],[2, 'joseantonio'], [3, 'nico'], [4, 'hermana de nico']
 
 
 async function hashPassword(pw) {
-    //hash the password
     const hashedPassword = await bcrypt.hash(String(pw), 10);
     return hashedPassword;
 }
@@ -99,8 +98,6 @@ io.on('connection', socket =>{
             const data = await response.json();
     
             users = Array.isArray(data) ? data : [];
-            // Console log to ensure that use-effect is working properly
-            console.log("If Printed, users were loaded.");
         } catch (error) {
             console.log('Error fetching users:', error);
         }
@@ -112,12 +109,12 @@ io.on('connection', socket =>{
     async function verifyCredentials(un, pw) {
         let verified = false
         let users = await fetchUsers();
-        hashedPassword = hashPassword(pw)
+        hashedPassword = await hashPassword(pw)
         foundUser = users.some(u => u.username === un)
 
         if (foundUser) {
             const thisuser = users.find(u => u.username === un);
-            const passwordMatch = await bcrypt.compare(user.pw, thisuser.password); // Compare the passwords
+            const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
             if (passwordMatch) {
                 verified = true
             }
@@ -229,7 +226,7 @@ io.on('connection', socket =>{
         console.log('Server received user:', user);
 
         let message = ""
-        const verified = verifyCredentials(user.username)
+        const verified = await verifyCredentials(user.un, user.pw)
         
         if (verified) {
             message = "Logged In! "
@@ -250,8 +247,6 @@ io.on('connection', socket =>{
                 gameStats: foundUser.gameStats,
                 message: message,
             });
-            
-            console.log("Hello")
         } 
         else {
             message = 'Username or Password is incorrect.'
@@ -259,6 +254,7 @@ io.on('connection', socket =>{
             io.emit('loginFailed',{ message });
         }
     })
+
     socket.on('logout', async () => {
         logout();
     })

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {getUsername, getPassword} from './FrontendCommons.js'
 import { GameR } from './gameComponents.js'
 import Chat from './Chat.js'
 import { useLocation } from 'react-router-dom';

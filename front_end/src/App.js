@@ -8,8 +8,7 @@ import GamePage from './GamePage';
 import Lobby from './Lobby';
 import Login from './Login';
 import SignUp from './SignUp';
-import TestPage from './TestPage';
-import { getUsername } from './FrontendCommons.js';
+// import TestPage from './TestPage';
 import { getServerAddress, getServerPort} from './serverData.js'
 import TopBar from './TopBar.js';
 
@@ -27,6 +26,18 @@ function App() {
                                         reconnectionAttempts: Infinity, reconnectionDelay: 5000, // 5 seconds
                                       }));
   const [page, setPage] = useState(PAGES.LOBBY);
+  const [userName, setUserName] = useState(localStorage.getItem('username') || '');
+  const [password, setPassword] = useState(localStorage.getItem('password') || '');
+
+  const changeUserName = (newUserName) => {
+    localStorage.setItem('username', newUserName);
+    setUserName(newUserName);
+  };
+
+  const changePassword = (newPassword) => {
+    localStorage.setItem('password', newPassword);
+    setPassword(newPassword);
+  };
 
   useEffect(() => {
   
@@ -51,15 +62,15 @@ function App() {
   function renderPage(page, socket) {
     switch (page) {
       case PAGES.LOBBY:
-        return <Lobby socket={socket} changePage={setPage}/>;
+        return <Lobby socket={socket} changePage={setPage} userName={userName} password={password}/>;
       case PAGES.LOGIN:
-        return <Login socket={socket} changePage={setPage}/>;
+        return <Login socket={socket} changePage={setPage} setUserName={changeUserName} setPassword={changePassword}/>;
       case PAGES.SIGNUP:
-        return <SignUp socket={socket} changePage={setPage}/>;
+        return <SignUp socket={socket} changePage={setPage} setUserName={changeUserName} setPassword={changePassword}/>;
       case PAGES.GAMEPAGE:
-        return <GamePage socket={socket} changePage={setPage}/>;
-      case PAGES.TEST:
-        return <TestPage socket={socket}/>;
+        return <GamePage socket={socket} changePage={setPage} userName={userName} password={password}/>;
+      // case PAGES.TEST:
+      //   return <TestPage socket={socket}/>;
       default:
         return null; // or a default page
     }
@@ -67,7 +78,7 @@ function App() {
 
   return (
     <div className='App'>
-      <TopBar changePage={setPage}/> 
+      <TopBar changePage={setPage} userName={userName}/> 
       {renderPage(page, socket)}
     </div>
   );

@@ -20,6 +20,15 @@
     cursor: default;
 }
 
+#userName {
+    text-align: right;
+    display: block;
+    margin-bottom: 2px;
+}
+
 #changeUser {
+    display: block;
     cursor: pointer;
+    font-size: small;
+    text-align: right;
 }

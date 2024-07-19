@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getUsername, getPassword } from './FrontendCommons.js';
 import { EVENTTYPE } from './commonsSymbolicLink/socketUtils.js';
 import './Chat.css';
 
-function Chat({className, socket, roomId = 0}) {
+function Chat({className, socket, roomId = 0, userName, password}) {
   let communicationId = 'generalChat';
   if (roomId !== 0) {
     communicationId = roomId;
@@ -42,7 +41,7 @@ function Chat({className, socket, roomId = 0}) {
   // with its user name and send them to the server
   const send = (e) => {
     e.preventDefault();
-    socket.emit(communicationId, getUsername(), getPassword(), EVENTTYPE.CHAT, msg);
+    socket.emit(communicationId, userName, password, EVENTTYPE.CHAT, msg);
     setMsg('');
   };
 
@@ -57,7 +56,7 @@ function Chat({className, socket, roomId = 0}) {
 
       <div className="Messages">
         {chat.map((myData, index) => (
-          <p className={"MessageEntry "  + (myData.userName === getUsername() ? 'MyMessage' : '')} key={index}>
+          <p className={"MessageEntry "  + (myData.userName === userName ? 'MyMessage' : '')} key={index}>
             <span className={"UserName"}>{myData.userName}</span>
             <span className="msg">: {myData.msg}</span>
           </p>

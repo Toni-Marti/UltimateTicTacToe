@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
 import Chat from './Chat';
-import { getUsername, getPassword } from './FrontendCommons';
 import './Lobby.css';
 import { getServerAddress } from './serverData.js';
 import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from './popUps.js';
@@ -10,7 +9,7 @@ import { PAGES } from './App.js';
 
 // Room is an array that contains elements structured as:
 // [player_name, game_rules]
-function Lobby({socket}) {
+function Lobby({socket, userName, password}) {
 
   const [showJoinMessage, setShowJoinMessage] = useState(false);
   const [showRejectionMessage, setShowRejectionMessage] = useState(false);
@@ -33,7 +32,7 @@ function Lobby({socket}) {
     };
 
     const handleCreateRoom = (username, roomNumber) => {
-      if (username === getUsername()) {
+      if (username === userName) {
         let roomId = roomNumber;
       }
     };
@@ -65,11 +64,11 @@ function Lobby({socket}) {
   };
 
   const handleYesClick = () => {
-    socket.emit('joinRoom', getUsername(), getPassword(), rooms[selectedRoomIndex][0]);
+    socket.emit('joinRoom', userName, password, rooms[selectedRoomIndex][0]);
   };
 
   const handleCreateGameClick = () => {
-    socket.emit('createRoom', getUsername(), getPassword());
+    socket.emit('createRoom', userName, password);
   };
 
   return (
@@ -93,7 +92,7 @@ function Lobby({socket}) {
           </div>
         </div>
 
-        <Chat socket={socket}/>
+        <Chat socket={socket} userName={userName} password={password}/>
 
       </div>
 
