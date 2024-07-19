@@ -5,13 +5,11 @@ import { getUsername, getPassword } from './FrontendCommons';
 import './Lobby.css';
 import { getServerAddress } from './serverData.js';
 import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from './popUps.js';
-import { useNavigate } from 'react-router-dom';
 
 
 // Room is an array that contains elements structured as:
 // [player_name, game_rules]
-function Lobby({socket}) { 
-  const navigate = useNavigate();
+function Lobby({socket}) {
 
   const [showJoinMessage, setShowJoinMessage] = useState(false);
   const [showRejectionMessage, setShowRejectionMessage] = useState(false);
@@ -26,7 +24,6 @@ function Lobby({socket}) {
     const handleJoinRoom = (username, accepted) => {
       if (accepted) {
         let roomId = rooms[selectedRoomIndex][0];
-        navigate('/GamePage', { state: { roomId } });
         setShowJoinMessage(false);
       } else {
         setShowJoinMessage(false);
@@ -37,8 +34,6 @@ function Lobby({socket}) {
     const handleCreateRoom = (username, roomNumber) => {
       if (username === getUsername()) {
         let roomId = roomNumber;
-        // Go to GamePage
-        navigate('/GamePage', { state: { roomId } });
       }
     };
 

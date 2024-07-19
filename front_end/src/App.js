@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import io from 'socket.io-client'
-import Nav from './Nav';
 
 import "./App.css"
 
@@ -11,15 +9,24 @@ import Lobby from './Lobby';
 import Login from './Login';
 import SignUp from './SignUp';
 import TestPage from './TestPage';
-import Chat from './Chat.js';
 import { getUsername } from './FrontendCommons.js';
 import { getServerAddress, getServerPort} from './serverData.js'
+import TopBar from './TopBar.js';
+
+const PAGES = Object.freeze({
+  LOBBY: 'Lobby',
+  LOGIN: 'Login',
+  SIGNUP: 'SignUp',
+  GAMEPAGE: 'GamePage',
+  TEST: 'TestPage'
+});
 
 
 function App() {
   const [socket, setSocket] = useState(io(getServerAddress() + ':' + getServerPort(), {
                                         reconnectionAttempts: Infinity, reconnectionDelay: 5000, // 5 seconds
                                       }));
+  const [page, setPage] = useState(PAGES.LOBBY);
 
   useEffect(() => {
   
@@ -39,25 +46,30 @@ function App() {
     };
   }, []);
 
+  function renderPage(page, socket) {
+    switch (page) {
+      case PAGES.LOBBY:
+        return <Lobby socket={socket} />;
+      case PAGES.LOGIN:
+        return <Login socket={socket} />;
+      case PAGES.SIGNUP:
+        return <SignUp socket={socket} />;
+      case PAGES.GAMEPAGE:
+        return <GamePage socket={socket} />;
+      case PAGES.TEST:
+        return <TestPage socket={socket} />;
+      default:
+        return null; // or a default page
+    }
+  }
+
   return (
-    <Router>
-        <div className='App'>
-          <h1>Welcome {getUsername()}</h1>
-          <Nav />
-          <div>
-          <Routes>
-            <Route path="/Lobby" element={<Lobby socket={socket} />}/>
-            <Route path="/Login" element={<Login socket={socket}/>} />
-            <Route path="/SignUp" element={<SignUp socket={socket}/>} />
-            <Route path="/GamePage" element={<GamePage socket={socket}/>}/>
-            <Route path="/Game" element={<GameR />}/>
-            <Route path="/TestPage" element={<TestPage socket={socket}/>} />
-            <Route path="/Chat" element={<Chat socket={socket}/>} />
-          </Routes>
-          </div>
-        </div>
-    </Router>
+    <div className='App'>
+      <TopBar changePage={setPage}/> 
+      {renderPage(page, socket)}
+    </div>
   );
 }
 
 export default App;
+export { PAGES };
