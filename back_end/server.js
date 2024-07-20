@@ -1,15 +1,21 @@
-const { execPath } = require('process');
+import { Game } from './commonsSymbolicLink/gameLogic.js';
+const { execPath, emit } = require('process');
 const { EVENTTYPE } = require('./commonsSymbolicLink/socketUtils.js');
 const bcrypt = require('bcrypt');
 const { error } = require('console');
+const { hostname } = require('os');
 const app = require('express')()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server,{
     cors:{origin:'*',}
 })
 
-let rooms = [[1, 'paco'],[2, 'joseantonio'], [3, 'nico'], [4, 'hermana de nico'], [5, 'juancarlo']];
+// Key: [board, host_socket]
+let avialebleRooms = {}
 
+// Key: [player1_socket, player2_socket, player1_ready, player2_ready, game]
+let rooms = {}
+let next_room = 1;
 
 async function hashPassword(pw) {
     const hashedPassword = await bcrypt.hash(String(pw), 10);
@@ -21,62 +27,72 @@ async function hashPassword(pw) {
 io.on('connection', socket =>{
     console.log('New conection on the server')
 
-    socket.on('generalChat', (username, password, eventType, event) => {
-        console.log('New message in general chat from', username, ':', event)
-        io.emit('generalChat', username, eventType, event)
-    })
+    // socket.on('generalChat', (username, password, eventType, event) => {
+    //     console.log('New message in general chat from', username, ':', event)
+    //     io.emit('generalChat', username, eventType, event)
+    // })
 
-    socket.on('createRoom', (username, password) => {
-        let roomNumber = 1;
-        while (rooms.some(room => room[0] === roomNumber)) {
-            roomNumber = roomNumber+1;
-        }
-        rooms.push([roomNumber, username]);
-        io.emit('createRoom', username, roomNumber)
-        console.log('The user', username, 'created the room:', roomNumber)
+    // socket.on('createRoom', (username, password) => {
+    //     let roomNumber = 1;
+    //     while (rooms.some(room => room[0] === roomNumber)) {
+    //         roomNumber = roomNumber+1;
+    //     }
+    //     rooms.push([roomNumber, username]);
+    //     io.emit('createRoom', username, roomNumber)
+    //     console.log('The user', username, 'created the room:', roomNumber)
 
-        subscribeToRoom(roomNumber);
-    })
+    //     subscribeToRoom(roomNumber);
+    // })
 
-    socket.on('joinRoom', (username, password, roomNumber) => {
-        if (rooms.some(room => room[0] === roomNumber)){
-            io.emit('joinRoom', username, true);
-            // It deletes the room with the id roomNumber
-            rooms = rooms.filter(room => room[0] !== roomNumber);
-        }
-        else {
-            io.emit('joinRoom', username, false)
-        }
-    })
+    // socket.on('joinRoom', (username, password, roomNumber) => {
+    //     if (rooms.some(room => room[0] === roomNumber)){
+    //         io.emit('joinRoom', username, true);
+    //         // It deletes the room with the id roomNumber
+    //         rooms = rooms.filter(room => room[0] !== roomNumber);
+    //     }
+    //     else {
+    //         io.emit('joinRoom', username, false)
+    //     }
+    // })
+    // function subscribeToRoom(roomNumber) {
+    //     socket.on(roomNumber, (username, password, eventType, event) => {
+    //         if (eventType === EVENTTYPE.CHAT) {
+    //             console.log('New message in private chat in room', roomNumber, 'from', username, ':', event)
+    //             io.emit(roomNumber, username, eventType, event)
+    //         }
+    //         else if (eventType === EVENTTYPE.ACTION) {
+    //             io.emit(roomNumber, username, eventType, event);
+    //         }
+    //     });
+    // }
 
     socket.on('listRooms', () => {
-        io.emit('listRooms', rooms)
+        socket.emit('listRooms', avialebleRooms.map(([key, value]) => [key, value[0]]));
     })
 
-    function subscribeToRoom(roomNumber) {
-        socket.on(roomNumber, (username, password, eventType, event) => {
-            if (eventType === EVENTTYPE.CHAT) {
-                console.log('New message in private chat in room', roomNumber, 'from', username, ':', event)
-                io.emit(roomNumber, username, eventType, event)
-            }
-            else if (eventType === EVENTTYPE.ACTION) {
-                io.emit(roomNumber, username, eventType, event);
-            }
-        });
-    }
+    socket.on('createRoom', (username, password, board) => {
+        avialebleRooms[username] = board;
+        io.emit('newRoom', username, board);
+        socket.on('disconnect', () => {
+            delete avialebleRooms[username];
+            io.emit('deleteRoom', username);
+        })
+    })
 
-
-
-
-
-
-
-
-
-
-
-
-
+    socket.on('joinRoom', (username, password, host_name) => {
+        room = avialebleRooms[host_name];
+        if (room !== undefined) {
+            socket.emit('canJoin', true, next_room);
+            avialebleRooms[host_name][1].emit('playerJoined');
+            rooms[next_room] = [socket, avialebleRooms[host_name][1], false, false, new Game()];
+            next_room++;
+            delete avialebleRooms[host_name];
+            io.emit('deleteRoom', host_name);
+        }
+        else {
+            socket.emit('canJoin', false);
+        }
+    })
 
 
 
@@ -212,11 +228,11 @@ io.on('connection', socket =>{
                 body: JSON.stringify(newUserObj)
             }).then(() => {
                 //debugging message
-                io.emit('signupSuccess', { message });
+                socket.emit('signupSuccess', { message });
             });
         }
         else {
-            io.emit('signupFailed', { message });
+            socket.emit('signupFailed', { message });
         }
         
     })
@@ -241,7 +257,7 @@ io.on('connection', socket =>{
             
             console.log(foundUser)
 
-            io.emit('loginSuccess', {
+            socket.emit('loginSuccess', {
                 id: foundUser.id,
                 username: foundUser.username,
                 gameStats: foundUser.gameStats,
@@ -251,30 +267,10 @@ io.on('connection', socket =>{
         else {
             message = 'Username or Password is incorrect.'
             console.log(message)
-            io.emit('loginFailed',{ message });
+            socket.emit('loginFailed',{ message });
         }
     })
-
-    socket.on('logout', async () => {
-        logout();
-    })
-
 })
-
-//invalid credentials
-function forceLogout() {
-    const errorMessage = "Invalid credentials."
-    console.log(errorMessage)
-    io.emit('forceLogout', errorMessage);
-    logout();
-}
-
-//logout
-function logout() {
-    const message = "You have been logged out.";
-    console.log(message);
-    io.emit('logout', { message });
-}
 
 
 // The server listens on port 4000

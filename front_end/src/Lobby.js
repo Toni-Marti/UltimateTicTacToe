@@ -39,16 +39,12 @@ function Lobby({socket, changePage, userName, password}) {
       }
     };
 
-    socket.emit('listRooms');
     socket.once('listRooms', handleListRooms);
-    socket.on('joinRoom', handleJoinRoom);
-    socket.on('createRoom', handleCreateRoom);
+    socket.emit('listRooms');
 
     // Cleanup function to remove event listeners and disconnect socket when component unmounts
     return () => {
       socket.off('joinRoom');
-      socket.off('createRoom');
-      socket.off('listRooms');
     };
   }, []);
 

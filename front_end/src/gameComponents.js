@@ -1,5 +1,5 @@
 import { useDebugValue, useEffect, useState } from "react";
-import { MARK, Tile, Board, Rules, Game } from "./gameLogic";
+import { MARK, Tile, Board, Rules, Game } from "./commonsSymbolicLink/gameLogic";
 import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from "./popUps";
 import "./gameComponents.css";
 
