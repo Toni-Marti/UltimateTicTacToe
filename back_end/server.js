@@ -53,6 +53,17 @@ io.on('connection', socket =>{
         io.emit('listRooms', rooms)
     })
 
+    socket.on('userStats', async (username) => {
+        let users = await fetchUsers();
+        if (users.some(u => u.username === username)) {
+            const thisuser = users.find(u => u.username === username);
+            io.emit('userStats', username, thisuser.gameStats);
+
+            console.log('Usuario ', username, ' ha solicitado wins: ', thisuser.gameStats.wins);
+        }
+        console.log('Usuario ', username, ' ha solicitado wins');
+    })
+
     function subscribeToRoom(roomNumber) {
         socket.on(roomNumber, (username, password, eventType, event) => {
             if (eventType === EVENTTYPE.CHAT) {
