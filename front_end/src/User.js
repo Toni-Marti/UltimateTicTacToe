@@ -11,8 +11,10 @@ function User({children, socket}) {
         <>
             <Overlay/>
             <MessagePopUp onClick={() => setPopUp(null)}>
-                User: {children}
-                <Stadistics loss={losses} draw={ties} win={wins}/>
+                <div style={{color:'black'}}>
+                    <h2> {children} </h2>
+                    <Stadistics loss={losses} draw={ties} win={wins}/>
+                </div>
             </MessagePopUp>
         </>
     )
@@ -33,7 +35,7 @@ function User({children, socket}) {
 
   return (
     <>
-        <span onClick={updateStats}>{children}</span>
+        <span onClick={updateStats} style={{fontWeight:'bold', cursor:'pointer'}}>{children}</span>
         {popUp}
 
     </>
