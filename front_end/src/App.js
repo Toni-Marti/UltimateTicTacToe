@@ -80,7 +80,7 @@ function App() {
 
   return (
     <div className='App'>
-      <TopBar changePage={setPage} userName={userName}/> 
+      <TopBar changePage={setPage} userName={userName} socket={socket}/> 
       {renderPage(page, socket)}
     </div>
   );

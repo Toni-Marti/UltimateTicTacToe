@@ -90,9 +90,49 @@ io.on('connection', socket =>{
             io.emit('deleteRoom', host_name);
         }
         else {
-            socket.emit('canJoin', false);
+            io.emit('joinRoom', username, false)
         }
     })
+
+    socket.on('listRooms', () => {
+        io.emit('listRooms', rooms)
+    })
+
+    socket.on('userStats', async (username) => {
+        let users = await fetchUsers();
+        if (users.some(u => u.username === username)) {
+            const thisuser = users.find(u => u.username === username);
+            io.emit('userStats', username, thisuser.gameStats);
+
+            console.log('Usuario ', username, ' ha solicitado wins: ', thisuser.gameStats.wins);
+        }
+        console.log('Usuario ', username, ' ha solicitado wins');
+    })
+
+    function subscribeToRoom(roomNumber) {
+        socket.on(roomNumber, (username, password, eventType, event) => {
+            if (eventType === EVENTTYPE.CHAT) {
+                console.log('New message in private chat in room', roomNumber, 'from', username, ':', event)
+                io.emit(roomNumber, username, eventType, event)
+            }
+            else if (eventType === EVENTTYPE.ACTION) {
+                io.emit(roomNumber, username, eventType, event);
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
