@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useDebugValue, useEffect, useState } from "react";
 import { MARK, Tile, Board, Rules, Game } from "./gameLogic";
 import { Overlay, EmptyPopUp, MessagePopUp, TwoButtonPopUp } from "./popUps";
 import "./gameComponents.css";
@@ -103,17 +103,15 @@ function BoardR({game, mark_function, hover_player, address = "", className = ""
     );
 }
 
-function GameR({size = ["500px", "500px"], isMyTyrn = true, is_online = false}) {
-    // CLASIC tic tac toe
-    // const [gameSt, setGameSt] = useState(new Game());
-    // CLASIC ultimate tic tac toe
-    const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Board(), new Board(),new Board(),new Board(),new Board(),new Board(),new Board(),new Board()])));
-    // TEST board
-    // const [gameSt, setGameSt] = useState(new Game(new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()]), new Rules()));
-    
+function GameR({isMyTyrn = true, is_online = false, board=new Board()}) {
+    const [gameSt, setGameSt] = useState(new Game());
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");
     const [hasShownWinner, setHasShownWinner] = useState(false);
+
+    useEffect(() => {
+        setGameSt(new Game(board));
+    }, [board])
 
     // Only for debuging
     function colorChanged(val) {
@@ -189,7 +187,7 @@ function GameR({size = ["500px", "500px"], isMyTyrn = true, is_online = false}) 
                 :
                 null
             } */}
-            <div style={{width: size[0], height: size[1]}}>
+            <div class="MainBoard">
                 <BoardR game={gameSt} hover_player={hover_player} board={gameSt.mainBoard} mark_function={markTile} />
             </div>
             {showWinner 
@@ -206,4 +204,31 @@ function GameR({size = ["500px", "500px"], isMyTyrn = true, is_online = false}) 
     );
 }
 
-export { GameR };
+const full_board = new Board([new Board(), new Board(), new Board(), new Board(), new Board(), new Board(), new Board(), new Board(), new Board()])
+const avialeable_boards = [
+    ["Ultimate Tic-Tac-Toe", new Board([new Board(), new Board(), new Board(), new Board(), new Board(), new Board(), new Board(), new Board(), new Board()])],
+    ["Classic Tic-Tac-Toe", new Board()], 
+    ["Simple", new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()])])],
+    ["Focused", new Board([new Board(), new Tile(), new Board(), new Tile(), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Board()]), new Tile(), new Board(), new Tile(), new Board()])],
+    ["Cross", new Board([new Tile (), new Board(), new Tile(), new Board(), new Board([new Tile(), new Board(), new Tile(), new Board(), new Tile(), new Board(), new Tile(), new Board()]), new Board(), new Tile(), new Board()])],
+    ["Piled Up", new Board([new Board([new Board(), new Tile(), new Board(), new Tile(), new Tile(), new Board(), new Board(), new Board()  ]), new Board([new Board(), new Tile(), new Tile(), new Board(), new Tile(), new Tile(), new Board()]), new Tile(), new Board([new Board(), new Board(), new Board()]), new Board([new Board()]), new Tile(), new Tile(), new Tile(), new Board()])],
+    ["Crowded Edges", new Board([new Board([new Board(), new Board(), new Board(), new Board(), new Tile(), new Tile(), new Board()]), new Board([new Board(), new Board(), new Board()]), new Board([new Board(), new Board(), new Board(), new Tile(), new Tile(), new Board(), new Tile(), new Tile(), new Board()]), new Board([new Board(), new Tile(), new Tile(), new Board(), new Tile(), new Tile(), new Board()]), new Board(), new Board([new Tile(), new Tile(), new Board(), new Tile(), new Tile(), new Board(), new Tile(), new Tile(), new Board()]), new Board([new Board(), new Tile(), new Tile(), new Board(), new Tile(), new Tile(), new Board(), new Board(), new Board()]), new Board([new Tile(), new Tile(), new Tile(), new Tile(), new Tile(), new Tile(), new Board(), new Board(), new Board()]), new Board([new Tile(), new Tile(), new Board(), new Tile(), new Tile(), new Board(), new Board(), new Board(), new Board()])]),],
+    ["Super Ultimate Tic-Tac-Toe", new Board([Board.clone(full_board), Board.clone(full_board), Board.clone(full_board), Board.clone(full_board), Board.clone(full_board), Board.clone(full_board), Board.clone(full_board), Board.clone(full_board), Board.clone(full_board)   ])],
+                          ]
+function BoardSelection({maxBoarSize, size=["auto", "auto"], setBoard}) {
+    const [selectedBoardIndex, setSelectedBoardIndex] = useState(0);
+
+    return (
+        <div className="BoarSelection" style={{width:size[0], height:size[1]}}>
+            <div className="BoardShowcase" style={{maxWidth:maxBoarSize, maxHeight:maxBoarSize}}>
+                <GameR isMyTyrn={false} board={avialeable_boards[selectedBoardIndex][1]}/>
+            </div>
+            <div className="SelectionButtons">
+                {avialeable_boards.map((board_entry, index) => <button key={board_entry[0]} onClick={() => setSelectedBoardIndex(index)}>{board_entry[0]}</button>)}
+            </div>
+            <button className="SelectBoardButton" onClick={() => setBoard(Board.clone(avialeable_boards[selectedBoardIndex][1]))}>Select this board</button>
+        </div>
+    );
+}
+
+export { GameR, BoardSelection };

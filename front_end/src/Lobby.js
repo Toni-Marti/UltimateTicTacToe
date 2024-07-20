@@ -9,12 +9,14 @@ import { PAGES } from './App.js';
 
 // Room is an array that contains elements structured as:
 // [player_name, game_rules]
-function Lobby({socket, userName, password}) {
+function Lobby({socket, changePage, userName, password}) {
 
   const [showJoinMessage, setShowJoinMessage] = useState(false);
   const [showRejectionMessage, setShowRejectionMessage] = useState(false);
   const [selectedRoomIndex, setSelectedRoomIndex] = useState(null);
   const [rooms, setRooms] = useState([]);
+  const [creatingGame, setCreatingGame] = useState(false);
+  const [selectedBoard, setSelectedBoard] = useState(null);
 
   useEffect(() => {
     const handleListRooms = (r) => {
@@ -37,21 +39,18 @@ function Lobby({socket, userName, password}) {
       }
     };
 
-    socket.on('listRooms', handleListRooms);
+    socket.emit('listRooms');
+    socket.once('listRooms', handleListRooms);
     socket.on('joinRoom', handleJoinRoom);
-    socket.on('createRoom', handleCreateRoom)
+    socket.on('createRoom', handleCreateRoom);
 
     // Cleanup function to remove event listeners and disconnect socket when component unmounts
     return () => {
-      socket.off('listRooms', handleListRooms);
-      socket.off('joinRoom', handleJoinRoom);
-      socket.off('createRoom', handleCreateRoom);
+      socket.off('joinRoom');
+      socket.off('createRoom');
+      socket.off('listRooms');
     };
   }, []);
-
-  const listRooms = () => {
-    socket.emit('listRooms');
-  };
 
   const handlePlayerClick = (index) => {
     setSelectedRoomIndex(index);
@@ -79,10 +78,10 @@ function Lobby({socket, userName, password}) {
         <div className="Rooms">
           <div className="RoomsHeader">
             <h1 style={{textAlign:"center"}}>Available rooms</h1>
-            <button onClick={listRooms()}> Reload rooms </button>
+            <button onClick={() => changePage(PAGES.LOCALMODE)}>Local Mode</button>
+            <button className="CreateGameButton" style={{fontSize:"x-large"}} onClick={handleCreateGameClick}><p>Create game</p></button>
           </div>
           <div className="RoomList">
-            <button className="CreateGameButton" style={{fontSize:"x-large"}} onClick={handleCreateGameClick}><p>Create game</p></button>
             {rooms.map((room, index) => (
             <button key={index} className="Room" onClick={() => handlePlayerClick(index)}>
               <h2>{room[0]}</h2>

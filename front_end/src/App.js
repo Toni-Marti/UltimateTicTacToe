@@ -8,6 +8,7 @@ import GamePage from './GamePage';
 import Lobby from './Lobby';
 import Login from './Login';
 import SignUp from './SignUp';
+import LocalMode from './LocalMode';
 // import TestPage from './TestPage';
 import { getServerAddress, getServerPort} from './serverData.js'
 import TopBar from './TopBar.js';
@@ -17,16 +18,17 @@ const PAGES = Object.freeze({
   LOGIN: 'Login',
   SIGNUP: 'SignUp',
   GAMEPAGE: 'GamePage',
+  LOCALMODE: 'LocalMode',
   TEST: 'TestPage'
 });
 
 
+const socket = io(getServerAddress() + ':' + getServerPort(), {
+  reconnectionAttempts: Infinity, reconnectionDelay: 5000, });
+
 function App() {
-  const [socket, setSocket] = useState(io(getServerAddress() + ':' + getServerPort(), {
-                                        reconnectionAttempts: Infinity, reconnectionDelay: 5000, // 5 seconds
-                                      }));
   const [page, setPage] = useState(PAGES.LOBBY);
-  const [userName, setUserName] = useState(localStorage.getItem('username') || '');
+  const [userName, setUserName] = useState(localStorage.getItem('username') || 'guest');
   const [password, setPassword] = useState(localStorage.getItem('password') || '');
 
   const changeUserName = (newUserName) => {
@@ -54,8 +56,6 @@ function App() {
     return () => {
       socket.off('connect');
       socket.off('disconnect');
-      //console.log("Disconnecting from server");
-      //socket.disconnect();
     };
   }, []);
 
@@ -69,7 +69,9 @@ function App() {
         return <SignUp socket={socket} changePage={setPage} setUserName={changeUserName} setPassword={changePassword}/>;
       case PAGES.GAMEPAGE:
         return <GamePage socket={socket} changePage={setPage} userName={userName} password={password}/>;
-      // case PAGES.TEST:
+      case PAGES.LOCALMODE:
+        return <LocalMode changePage={setPage}/>;
+        // case PAGES.TEST:
       //   return <TestPage socket={socket}/>;
       default:
         return null; // or a default page

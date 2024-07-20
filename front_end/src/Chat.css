@@ -1,6 +1,7 @@
 .Chat {
   display: grid;
   grid-template-rows: auto 1fr auto;
+  padding-bottom: 10px;
 }
 
 .MessagesHeader::after {
@@ -15,7 +16,6 @@
 .Messages {
   overflow-y: auto;
   overflow-x: hidden;
-  /* height: calc(100vh - 246.2px); */
   margin-left: 10px;
   margin-top: 4px;
 }
@@ -59,6 +59,4 @@
   justify-content: center;
   display: flex;
   margin: 0 auto;
-
-  /* width: calc(100% - 40px); */
 }

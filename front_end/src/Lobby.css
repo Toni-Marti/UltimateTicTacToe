@@ -16,13 +16,12 @@
   display: grid;
   grid-template-rows: auto 1fr;
   text-justify: center;
-  
   border-right: 2px solid black;
 }
 
 .RoomList {
-  height: calc(100vh - 210px);
   overflow-y: auto;
+  height: max(300px, calc(100vh - 315px));
 }
 
 .Room {

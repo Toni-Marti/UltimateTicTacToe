@@ -197,7 +197,8 @@ class Board extends Tile {
 // only the one with the most lines wins, a second rule can come in hand with that one
 // if they have more than one line each, and it is a draw, then should it be XO/OX or NONE?
 class Rules {
-    constructor(keepPlacingInBoardAfterItIsMarked = true, boardCanHaveMultipleMarks = true) {
+    constructor(newLinesAlsoTeleport = true, keepPlacingInBoardAfterItIsMarked = true, boardCanHaveMultipleMarks = true) {
+        this.newLinesAlsoTeleport = newLinesAlsoTeleport;
         this.keepPlacingInBoardAfterItIsMarked = keepPlacingInBoardAfterItIsMarked;
         this.boardCanHaveMultipleMarks = boardCanHaveMultipleMarks;
     }
@@ -361,6 +362,12 @@ class Game {
     }
 
     #updateNextMoveBoardAddress(address_of_tile_clicked) {
+        if (this.rules.newLinesAlsoTeleport) {
+            while(address_of_tile_clicked !== "" && this.isPartOfValidLine(address_of_tile_clicked)) {
+                address_of_tile_clicked = address_of_tile_clicked.slice(0, -1);
+            }
+        }
+
         let next_address = address_of_tile_clicked.slice(0, -2);
         next_address += address_of_tile_clicked.slice(-1);
 
