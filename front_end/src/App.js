@@ -30,6 +30,7 @@ function App() {
   const [page, setPage] = useState(PAGES.LOBBY);
   const [userName, setUserName] = useState(localStorage.getItem('username') || 'guest');
   const [password, setPassword] = useState(localStorage.getItem('password') || '');
+  const [gameRoom, setGameRoom] = useState(null);
 
   const changeUserName = (newUserName) => {
     localStorage.setItem('username', newUserName);
@@ -62,13 +63,13 @@ function App() {
   function renderPage(page, socket) {
     switch (page) {
       case PAGES.LOBBY:
-        return <Lobby socket={socket} changePage={setPage} userName={userName} password={password}/>;
+        return <Lobby socket={socket} changePage={setPage} userName={userName} password={password} setGameRoom={setGameRoom}/>;
       case PAGES.LOGIN:
         return <Login socket={socket} changePage={setPage} setUserName={changeUserName} setPassword={changePassword}/>;
       case PAGES.SIGNUP:
         return <SignUp socket={socket} changePage={setPage} setUserName={changeUserName} setPassword={changePassword}/>;
       case PAGES.GAMEPAGE:
-        return <GamePage socket={socket} changePage={setPage} userName={userName} password={password}/>;
+        return <GamePage socket={socket} changePage={setPage} userName={userName} password={password} roomId={gameRoom}/>;
       case PAGES.LOCALMODE:
         return <LocalMode changePage={setPage}/>;
         // case PAGES.TEST:

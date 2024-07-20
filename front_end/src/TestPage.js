@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client'
-import {EVENTTYPE} from './commonsSymbolicLink/socketUtils.js'
 import { getServerAddress } from './serverData.js'
 
 function TestPage({socket})

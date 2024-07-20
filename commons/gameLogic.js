@@ -20,6 +20,17 @@ class Tile {
         return new Tile(tile_instance.value);
     }
 
+    static toJSON(tile_instance) {
+        return {
+            value: tile_instance.value,
+            type: "Tile",
+        };
+    }
+
+    static fromJSON(data) {
+        return new Tile(data.value);
+    }
+
     markTile(mark, _tile_address = "") {
         this.value = mark;
     }
@@ -75,11 +86,48 @@ class Board extends Tile {
         return newBoard;
     }
 
+    static toJSON(board_instance) {
+        return {
+            tiles: board_instance.tiles.map(tile => {
+                if (tile instanceof Board) {
+                    return Board.toJSON(tile);
+                }
+                else {
+                    return Tile.toJSON(tile);
+                }
+            }),
+            more_than_one_mark: board_instance.more_than_one_mark,
+            first_lines_indexes: board_instance.first_lines_indexes,
+            value: board_instance.value,
+            type: "Board",
+        };
+    }
+
+    static fromJSON(data) {
+        let newBoard = new Board();
+        newBoard.tiles = data.tiles.map(tile => {
+            if (tile.type === "Board") {
+                return Board.fromJSON(tile);
+            }
+            else {
+                return Tile.fromJSON(tile);
+            }
+        });
+
+        newBoard.more_than_one_mark = data.more_than_one_mark;
+        newBoard.first_lines_indexes = data.first_lines_indexes;
+
+        newBoard.value = data.value;
+
+        return newBoard;
+    }
+
     markTile(mark, tile_address) {
         this.tiles[(+tile_address[0])-1].markTile(mark, tile_address.slice(1));
         this.#updateValue();
     }
 
+    // TOOO:  needs updating
     firstMark() {
         if ([MARK.X, MARK.XO].includes(this.value)) {
             return MARK.X;
@@ -210,12 +258,24 @@ class Rules {
 
         return newRules;
     }
+
+    static toJSON(rules_instance) {
+        return {
+            newLinesAlsoTeleport: rules_instance.newLinesAlsoTeleport,
+            keepPlacingInBoardAfterItIsMarked: rules_instance.keepPlacingInBoardAfterItIsMarked,
+            boardCanHaveMultipleMarks: rules_instance.boardCanHaveMultipleMarks,
+        };
+    }
+
+    static fromJSON(data) {
+        return new Rules(data.newLinesAlsoTeleport, data.keepPlacingInBoardAfterItIsMarked, data.boardCanHaveMultipleMarks);
+    }
 }
 
 
 
 class Game {
-    constructor(board = new Board(), rules = new Rules(), player1 = "Player1", player2 = "Player2") {
+    constructor(board = new Board(), player1 = "Player1", player2 = "Player2", rules = new Rules()) {
         this.mainBoard = Board.clone(board);
         this.mainBoard.setMoreThanOneMarkRecursive(rules.boardCanHaveMultipleMarks);
         this.currentPlayer = MARK.X;
@@ -231,6 +291,25 @@ class Game {
         let newGame = new Game(game_instance.mainBoard, game_instance.rules, game_instance.player1, game_instance.player2);
         newGame.currentPlayer = game_instance.currentPlayer;
         newGame.nextMoveBoardAddress = game_instance.nextMoveBoardAddress;
+
+        return newGame;
+    }
+
+    static toJSON(game_instance) {
+        return {
+            mainBoard: Board.toJSON(game_instance.mainBoard),
+            rules: Rules.toJSON(game_instance.rules),
+            currentPlayer: game_instance.currentPlayer,
+            nextMoveBoardAddress: game_instance.nextMoveBoardAddress,
+            player1: game_instance.player1,
+            player2: game_instance.player2,
+        };
+    }
+
+    static fromJSON(data) {
+        let newGame = new Game(Board.fromJSON(data.mainBoard), Rules.fromJSON(data.rules), data.player1, data.player2);
+        newGame.currentPlayer = data.currentPlayer;
+        newGame.nextMoveBoardAddress = data.nextMoveBoardAddress;
 
         return newGame;
     }
@@ -258,7 +337,7 @@ class Game {
     }
 
     getWinner() {
-        this.mainBoard.fistMark();
+        this.mainBoard.firstMark();
     }
     
     getTile(address) {
@@ -385,6 +464,8 @@ class Game {
     }
 }
 
-
-export default Game;
-export { MARK, Tile, Board, Rules, Game };
+module.exports.MARK = MARK;
+module.exports.Tile = Tile;
+module.exports.Board = Board;
+module.exports.Rules = Rules;
+module.exports.Game = Game;

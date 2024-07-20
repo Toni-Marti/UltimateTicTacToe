@@ -1,33 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { EVENTTYPE } from './commonsSymbolicLink/socketUtils.js';
 import './Chat.css';
 
 function Chat({className, socket, roomId = 0, userName, password}) {
-  let communicationId = 'generalChat';
-  if (roomId !== 0) {
-    communicationId = roomId;
-  }
-
   // Variables for saving the message and message list
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
-  const [previousComID, setPreviousComID] = useState(communicationId);
   const messagesEndRef = useRef(null);
 
-  // Each time the website is updated, we add
-  // the new message with its user name to the chat
   useEffect(() => {
-    socket.on(communicationId, (userName, eventType, msg) => {
-      if (eventType === EVENTTYPE.CHAT){
-        setChat(prevChat => [...prevChat, { userName, msg }]);
-      }
-    });
+    socket.on(roomId, (userName, msg) => {
+      setChat((prev) => [...prev, { userName, msg }]);
+    })
 
     return () => {
-      socket.off(previousComID);
-      setPreviousComID(communicationId);
-    };
-  }, [communicationId]);
+      socket.off(roomId);
+    }
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -41,7 +29,7 @@ function Chat({className, socket, roomId = 0, userName, password}) {
   // with its user name and send them to the server
   const send = (e) => {
     e.preventDefault();
-    socket.emit(communicationId, userName, password, EVENTTYPE.CHAT, msg);
+    socket.emit(roomId, userName, msg);
     setMsg('');
   };
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GameR, BoardSelection } from './gameComponents';
+import { Game } from './commonsSymbolicLink/gameLogic';
 import { Overlay, EmptyPopUp } from './popUps'
 
 function LocalMode ({changePage}) {
@@ -10,7 +11,7 @@ function LocalMode ({changePage}) {
             return <BoardSelection setBoard={setSelectedBoard} maxBoarSize={"650px"} size={["auto", "80vh"]}/>
         }
         else {
-            return <GameR board={selectedBoard}/>
+            return <GameR game={new Game(selectedBoard)}/>
         }
     }
     

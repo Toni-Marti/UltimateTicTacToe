@@ -25,10 +25,19 @@
 }
 
 .Room {
-  background: rgb(189, 189, 189);
-  color: black  ;
+  background: rgb(0, 139, 137);
+  color: rgb(255, 255, 255)  ;
 }
 
 .Room:hover {
-  background: rgb(255, 255, 255);
+  background: rgb(0, 101, 99);
+}
+
+#myRoom {
+  background: rgb(101, 101, 101);
+  color: rgb(255, 255, 255);
+}
+
+#myRoom:hover {
+  background: rgb(101, 101, 101);
 }

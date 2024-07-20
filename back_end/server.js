@@ -1,9 +1,5 @@
-import { Game } from './commonsSymbolicLink/gameLogic.js';
-const { execPath, emit } = require('process');
-const { EVENTTYPE } = require('./commonsSymbolicLink/socketUtils.js');
+const { Board, Game, MARK } = require('./commonsSymbolicLink/gameLogic.js');
 const bcrypt = require('bcrypt');
-const { error } = require('console');
-const { hostname } = require('os');
 const app = require('express')()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server,{
@@ -27,114 +23,115 @@ async function hashPassword(pw) {
 io.on('connection', socket =>{
     console.log('New conection on the server')
 
-    // socket.on('generalChat', (username, password, eventType, event) => {
-    //     console.log('New message in general chat from', username, ':', event)
-    //     io.emit('generalChat', username, eventType, event)
-    // })
-
-    // socket.on('createRoom', (username, password) => {
-    //     let roomNumber = 1;
-    //     while (rooms.some(room => room[0] === roomNumber)) {
-    //         roomNumber = roomNumber+1;
-    //     }
-    //     rooms.push([roomNumber, username]);
-    //     io.emit('createRoom', username, roomNumber)
-    //     console.log('The user', username, 'created the room:', roomNumber)
-
-    //     subscribeToRoom(roomNumber);
-    // })
-
-    // socket.on('joinRoom', (username, password, roomNumber) => {
-    //     if (rooms.some(room => room[0] === roomNumber)){
-    //         io.emit('joinRoom', username, true);
-    //         // It deletes the room with the id roomNumber
-    //         rooms = rooms.filter(room => room[0] !== roomNumber);
-    //     }
-    //     else {
-    //         io.emit('joinRoom', username, false)
-    //     }
-    // })
-    // function subscribeToRoom(roomNumber) {
-    //     socket.on(roomNumber, (username, password, eventType, event) => {
-    //         if (eventType === EVENTTYPE.CHAT) {
-    //             console.log('New message in private chat in room', roomNumber, 'from', username, ':', event)
-    //             io.emit(roomNumber, username, eventType, event)
-    //         }
-    //         else if (eventType === EVENTTYPE.ACTION) {
-    //             io.emit(roomNumber, username, eventType, event);
-    //         }
-    //     });
-    // }
-
-    socket.on('listRooms', () => {
-        socket.emit('listRooms', avialebleRooms.map(([key, value]) => [key, value[0]]));
+    socket.on(0, (user, mesage) => {
+        io.emit(0, user, mesage);
     })
 
     socket.on('createRoom', (username, password, board) => {
-        avialebleRooms[username] = board;
+        console.log('Creating room for', username);
+        avialebleRooms[username] = [Board.fromJSON(board), socket];
         io.emit('newRoom', username, board);
+
         socket.on('disconnect', () => {
+            console.log('User disconnected:', username);
             delete avialebleRooms[username];
             io.emit('deleteRoom', username);
         })
     })
 
+    socket.on('listRooms', () => {
+        socket.emit('listRooms', Object.entries(avialebleRooms).map(([key, value]) => [key, value[0]]));
+    })
+
     socket.on('joinRoom', (username, password, host_name) => {
         room = avialebleRooms[host_name];
+        board = room[0];
+        host_socket = room[1];
         if (room !== undefined) {
-            socket.emit('canJoin', true, next_room);
             avialebleRooms[host_name][1].emit('playerJoined');
-            rooms[next_room] = [socket, avialebleRooms[host_name][1], false, false, new Game()];
+            rooms[next_room] = [socket, avialebleRooms[host_name][1], false, false, new Game(board, host_name, username), false];
+            socket.emit('joinRoom', next_room);
+            host_socket.emit('joinRoom', next_room);
             next_room++;
             delete avialebleRooms[host_name];
             io.emit('deleteRoom', host_name);
         }
         else {
-            io.emit('joinRoom', username, false)
+            socket.emit('joinRoom', false)
         }
     })
 
-    socket.on('listRooms', () => {
-        io.emit('listRooms', rooms)
+    socket.on("deleteMyRoom", (username, password) => {
+        delete avialebleRooms[username];
+        io.emit('deleteRoom', username);
+    })
+
+    async function getAddress(socket) {
+        return new Promise((resolve, reject) => {
+            socket.once('move', (move) => {
+                resolve(move);
+            })
+        })
+    }
+
+    socket.on('ready', async (room_id) => {
+        io.on(room_id, (message) => {
+            io.emit(room_id, message);
+        })
+
+        let room = rooms[room_id];
+        if(room === undefined) {
+            return;
+        }
+
+        
+        if (room[0] === socket) {
+            room[2] = true;
+        }
+        else if (room[1] === socket) {
+            room[3] = true;
+        }
+        let ready1 = room[2];
+        let ready2 = room[3];
+        
+        if (ready1 && ready2 && !room[5]) {
+            let socket1 = room[0];
+            let socket2 = room[1];
+            let game = room[4];
+            room[5] = true;
+
+            if(Math.random() < 0.5) {
+                let temp_name = game.player1;
+                game.player1 = game.player2;
+                game.player2 = temp_name;
+
+                let temp_socket = socket1;
+                socket1 = socket2;
+                socket2 = temp_socket;
+            }
+
+            while(game.mainBoard.value === MARK.NONE && game.mainBoard.hasRoom()) {
+                console.log("playing")
+                
+                socket1.emit('updateGame', Game.toJSON(game), true);
+                socket2.emit('updateGame', Game.toJSON(game), false);
+                address = await getAddress(socket1);
+                game.markTile(address);
+
+                let temp_socket = socket1;
+                socket1 = socket2;
+                socket2 = temp_socket;
+            }
+        }
     })
 
     socket.on('userStats', async (username) => {
         let users = await fetchUsers();
         if (users.some(u => u.username === username)) {
             const thisuser = users.find(u => u.username === username);
-            io.emit('userStats', username, thisuser.gameStats);
-
-            console.log('Usuario ', username, ' ha solicitado wins: ', thisuser.gameStats.wins);
+            socket.emit('userStats', thisuser.gameStats);
         }
-        console.log('Usuario ', username, ' ha solicitado wins');
     })
-
-    function subscribeToRoom(roomNumber) {
-        socket.on(roomNumber, (username, password, eventType, event) => {
-            if (eventType === EVENTTYPE.CHAT) {
-                console.log('New message in private chat in room', roomNumber, 'from', username, ':', event)
-                io.emit(roomNumber, username, eventType, event)
-            }
-            else if (eventType === EVENTTYPE.ACTION) {
-                io.emit(roomNumber, username, eventType, event);
-            }
-        });
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     async function fetchUsers() {
         let users = [];

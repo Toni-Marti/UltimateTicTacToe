@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { GameR } from './gameComponents.js'
+import { Game } from './commonsSymbolicLink/gameLogic.js';
 import Chat from './Chat.js'
-import { useLocation } from 'react-router-dom';
 import { PAGES } from './App.js';
 
+import './GamePage.css'
 
+function GamePage({socket, roomId}) {
+    const [game, setGame] = useState(new Game());
+    const [myTurn, setMyTurn] = useState(false);
 
-function GamePage({socket})
-{
-
-    // Get parameter roomId
-    const location = useLocation();
-    const { roomId } = location.state || { roomId: 0 };
+    useEffect(() => {
+        socket.on("updateGame", (game, canPlay) => {
+            setGame(Game.fromJSON(game));
+            setMyTurn(canPlay);
+        });
+        socket.emit('ready', roomId);
+    }, [])
 
     return(
-        <div style={{ display: 'flex' }}>
-            <div style={{ flex: 1 }}>
-                <h1> Room id: {roomId} </h1>
-                <GameR  />
-            </div>
-            <div style={{ flex: 1 }}>
-                <Chat roomId={roomId} socket={socket}/>
-            </div>
+        <div className="GamePage">
+            <GameR game={game} isMyTyrn={myTurn} setLastMove={(move) => socket.emit("move", move)}/>
+            <Chat roomId={roomId} socket={socket}/>
         </div>
     );
 }

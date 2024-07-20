@@ -103,15 +103,15 @@ function BoardR({game, mark_function, hover_player, address = "", className = ""
     );
 }
 
-function GameR({isMyTyrn = true, is_online = false, board=new Board()}) {
-    const [gameSt, setGameSt] = useState(new Game());
+function GameR({isMyTyrn = true, is_online = false, game=new Game(), setLastMove=null}) {
+    const [gameSt, setGameSt] = useState(game);
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");
     const [hasShownWinner, setHasShownWinner] = useState(false);
 
     useEffect(() => {
-        setGameSt(new Game(board));
-    }, [board])
+            setGameSt(game);
+    }, [game])
 
     // Only for debuging
     function colorChanged(val) {
@@ -140,11 +140,16 @@ function GameR({isMyTyrn = true, is_online = false, board=new Board()}) {
     }
 
     function markTile(address) {
+        
         let newGameSt = Game.clone(gameSt); 
-
+        
         if (!isMyTyrn || !newGameSt.markTile(address)) {
             return;
         };
+        
+        if (setLastMove){
+            setLastMove(address);
+        }
         
         if (isDebugMode) {
             newGameSt.nextMoveBoardAddress = "";
@@ -221,7 +226,7 @@ function BoardSelection({maxBoarSize, size=["auto", "auto"], setBoard}) {
     return (
         <div className="BoarSelection" style={{width:size[0], height:size[1]}}>
             <div className="BoardShowcase" style={{maxWidth:maxBoarSize, maxHeight:maxBoarSize}}>
-                <GameR isMyTyrn={false} board={avialeable_boards[selectedBoardIndex][1]}/>
+                <GameR isMyTyrn={false} game={new Game(avialeable_boards[selectedBoardIndex][1])}/>
             </div>
             <div className="SelectionButtons">
                 {avialeable_boards.map((board_entry, index) => <button key={board_entry[0]} onClick={() => setSelectedBoardIndex(index)}>{board_entry[0]}</button>)}

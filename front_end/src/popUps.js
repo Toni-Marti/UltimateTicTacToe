@@ -1,7 +1,7 @@
 import './popUps.css'; 
 
-function Overlay () {
-    return (<div className='Overlay' />)
+function Overlay ({onClick=null}) {
+    return (<div className='Overlay' onClick={onClick}/>)
 }
 
 function EmptyPopUp ({children, className}) {
