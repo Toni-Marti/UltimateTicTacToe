@@ -22,7 +22,7 @@ function Login({socket, changePage, setUserName, setPassword}) {
         socket.on('loginSuccess', data => {
             setUserName(un)
             setPassword(pw)
-            setMessage("Successfully loged in!")
+            setMessage(data.message)
             setChangePageAfterPopUp(true);
         });
         socket.on('loginFailed', data => {
