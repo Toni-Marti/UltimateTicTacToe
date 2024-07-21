@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TwoButtonPopUp } from "./popUps.js";
+import { Overlay, TwoButtonPopUp } from "./popUps.js";
 import { PAGES } from './App.js';
 
 function Logout ({socket, changePage, setUserName, setPassword}) {
@@ -29,15 +29,16 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
             
             <span id="logout" onClick={() => setShowLogoutPopup(true)}>logout</span>
             
-            {showLogoutPopup && (
-                <TwoButtonPopUp
-                    children="Are you sure you want to logout?"
-                    negativeOnClick={cancelLogout}
-                    positiveOnClick={confirmLogout}
-                    negativeButtonText="No"
-                    positiveButtonText="Yes"
-                />
-            )}
+            {showLogoutPopup && <>
+    <Overlay />
+    <TwoButtonPopUp
+        children="Are you sure you want to logout?"
+        negativeOnClick={cancelLogout}
+        positiveOnClick={confirmLogout}
+        negativeButtonText="No"
+        positiveButtonText="Yes"
+    />
+</>}
         </div>
     );
 };

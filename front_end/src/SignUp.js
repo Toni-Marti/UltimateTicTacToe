@@ -65,16 +65,16 @@ function SignUp({socket, changePage, setUserName, setPassword}) {
                 <button type="submit">Sign Up</button>
             </form>
             <p style={{ textAlign: 'center' }}>Already have a account? <span className='link' onClick={() => changePage(PAGES.LOGIN)}>Log In</span></p>
-            {message != "" && <>
-                <Overlay />
-                <MessagePopUp children={message} onClick={() => {
-                    setMessage("")
-                    if(changePageAfterPopUp){
-                        changePage(PAGES.LOBBY);
-                        setChangePageAfterPopUp(false);
-                    }
-                }} />
-            </>}
+                {message != "" && <>
+                    <Overlay />
+                    <MessagePopUp children={message} onClick={() => {
+                        setMessage("")
+                        if(changePageAfterPopUp){
+                            changePage(PAGES.LOBBY);
+                            setChangePageAfterPopUp(false);
+                        }
+                    }} />
+                </>}
         </div>
     );
 }
