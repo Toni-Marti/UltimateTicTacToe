@@ -55,7 +55,7 @@ function Login({socket, changePage, setUserName, setPassword}) {
                 />
                 <button type="submit">Login</button>
             </form>
-            <p style={{ textAlign: 'center' }}>Don't have a user? <span className='link' onClick={() => changePage(PAGES.SIGNUP)}>Sing Up</span></p>
+            <p style={{ textAlign: 'center' }}>Don't have a user? <span className='link' onClick={() => changePage(PAGES.SIGNUP)}>Sign Up</span></p>
             {message != "" && <>
                 <Overlay />
                 <MessagePopUp children={message} onClick={() => {

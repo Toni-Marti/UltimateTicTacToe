@@ -22,7 +22,7 @@ function SignUp({socket, changePage, setUserName, setPassword}) {
             console.log("Sing in: ", un, pw);
             setUserName(un);
             setPassword(pw);
-            setMessage("Seuccessfully signed in!")
+            setMessage("Successfully signed in!")
             setChangePageAfterPopUp(true);
         });
         socket.on('signupFailed', data => {

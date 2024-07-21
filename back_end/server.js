@@ -135,6 +135,13 @@ io.on('connection', socket =>{
         }
     })
 
+    socket.on('logout', async (user) => {
+        socket.emit('logout', user);
+    })
+
+
+
+
     async function fetchUsers() {
         let users = [];
         try {

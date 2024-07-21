@@ -32,3 +32,10 @@
     font-size: small;
     text-align: right;
 }
+
+#logout {
+    display: block;
+    cursor: pointer;
+    font-size: small;
+    text-align: right;
+}

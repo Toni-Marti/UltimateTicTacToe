@@ -42,6 +42,14 @@ function App() {
     setPassword(newPassword);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('username');
+    localStorage.removeItem('password');
+    setUserName('guest');
+    setPassword('');
+    setPage(PAGES.LOGIN);
+  };
+
   useEffect(() => {
   
     socket.on('connect', () => {
@@ -50,7 +58,7 @@ function App() {
 
     socket.on('disconnect', () => {
       console.log('Disconnected from server');
-      console.log('Suposedlly trying to reconnect');
+      console.log('Supposedly trying to reconnect');
     });
   
     // Cleanup function to run when the component unmounts
@@ -81,7 +89,7 @@ function App() {
 
   return (
     <div className='App'>
-      <TopBar changePage={setPage} userName={userName} socket={socket}/> 
+      <TopBar changePage={setPage} userName={userName} socket={socket} handleLogout={handleLogout} /> 
       {renderPage(page, socket)}
     </div>
   );

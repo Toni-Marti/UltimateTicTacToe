@@ -153,7 +153,6 @@ function Lobby({socket, changePage, userName, password, setGameRoom}) {
             ))}
           </div>
         </div>
-
         <Chat socket={socket} roomId={0} userName={userName} password={password}/>
 
       </div>
