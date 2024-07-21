@@ -80,6 +80,7 @@ function App() {
       <TopBar
         changePage={setPage}
         userName={userName}
+        password={password}
         socket={socket}
         setUserName={setUserName} 
         setPassword={setPassword} 

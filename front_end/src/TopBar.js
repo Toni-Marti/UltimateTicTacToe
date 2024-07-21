@@ -6,7 +6,7 @@ import Logout from "./Logout.js";
 
 import "./TopBar.css"
 
-function TopBar({changePage, userName, socket, setUserName, setPassword}) {
+function TopBar({changePage, userName, password, socket, setUserName, setPassword}) {
     const [playerPopUp, setPlayerPopUp] = useState(null);
     
     
@@ -15,7 +15,7 @@ function TopBar({changePage, userName, socket, setUserName, setPassword}) {
         <div id="TopBar">
             <span id="title" onClick={() => changePage(PAGES.LOBBY)}>ULTIMATE-ULTIMATE TIC-TAC-TOE</span>
             <div id="userPart">
-            <span id="userName">User: <User userName={userName} setPopUp={setPlayerPopUp} socket={socket} /></span>
+            <span id="userName">User: <User userName={userName} password={password} setPopUp={setPlayerPopUp} socket={socket} /></span>
             <span id="changeUser" onClick={() => changePage(PAGES.LOGIN)}>change user</span>
                 <Logout 
                     socket={socket}
