@@ -27,6 +27,25 @@ io.on('connection', socket =>{
         io.emit(0, user, mesage);
     })
 
+
+    //verify logged in user exists
+    async function verifyCredentials(un, pw) {
+        let verified = false
+        let users = await fetchUsers();
+        hashedPassword = await hashPassword(pw)
+        foundUser = users.some(u => u.username === un)
+
+        if (foundUser) {
+            const thisuser = users.find(u => u.username === un);
+            const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
+            if (passwordMatch) {
+                verified = true
+            }
+        }
+        
+        return verified;        
+    }
+
     socket.on('createRoom', (username, password, board) => {
         console.log('Creating room for', username);
         availableRooms[username] = [Board.fromJSON(board), socket];
@@ -86,7 +105,6 @@ io.on('connection', socket =>{
             return;
         }
 
-        
         if (room[0] === socket) {
             room[2] = true;
         }
@@ -135,11 +153,6 @@ io.on('connection', socket =>{
         }
     })
 
-    
-
-
-
-
     async function fetchUsers() {
         let users = [];
         try {
@@ -162,25 +175,6 @@ io.on('connection', socket =>{
             console.log('Error fetching users:', error);
         }
         return users;
-    }
-    
-
-    //verify user
-    async function verifyCredentials(un, pw) {
-        let verified = false
-        let users = await fetchUsers();
-        hashedPassword = await hashPassword(pw)
-        foundUser = users.some(u => u.username === un)
-
-        if (foundUser) {
-            const thisuser = users.find(u => u.username === un);
-            const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
-            if (passwordMatch) {
-                verified = true
-            }
-        }
-        
-        return verified;        
     }
 
     //account creation: verify valid user info input
