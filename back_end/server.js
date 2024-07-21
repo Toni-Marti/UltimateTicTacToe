@@ -233,6 +233,15 @@ io.on('connection', socket =>{
         console.log(message)
         socket.emit('logout',{ message });
     }
+    function handleDisconnection(socket, room_id) {
+        let room = rooms[room_id];
+        if (room) {
+            if (room[0] === socket || room[1] === socket) {
+                delete rooms[room_id];
+                io.emit('roomClosed', room_id);
+            }
+        }
+    }
 
 
 
