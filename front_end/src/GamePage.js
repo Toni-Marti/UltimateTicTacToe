@@ -20,7 +20,12 @@ function GamePage({socket, userName, roomId}) {
 
     return(
         <div className="GamePage">
-            <GameR game={game} isMyTyrn={myTurn} setLastMove={(move) => socket.emit("move", move)}/>
+            <GameR game={game} isMyTyrn={myTurn} setLastMove={(move) => {
+                socket.emit("move", move)
+                let notMyTurnGame = Game.clone(game);
+                notMyTurnGame.isMyTyrn = false;
+                setGame(notMyTurnGame);
+            }}/>
             <Chat roomId={roomId} userName={userName} socket={socket}/>
         </div>
     );

@@ -23,8 +23,8 @@ async function hashPassword(pw) {
 io.on('connection', socket =>{
     console.log('New conection on the server')
 
-    socket.on(0, (user, mesage) => {
-        io.emit(0, user, mesage);
+    socket.on("message", (room, user, mesage) => {
+        io.emit(room, user, mesage);
     })
 
     //user action, must verify
@@ -112,26 +112,23 @@ io.on('connection', socket =>{
         
         if (room[0] === socket) {
             room[2] = true;
-            socket.join(room_id);
-            socket.on(room_id, (user, message) => {
-                io.to(room_id).emit(room_id, user, message);
-            })
         }
         else if (room[1] === socket) {
             room[3] = true;
-            socket.join(room_id);
-            socket.on(room_id, (user, message) => {
-                io.to(room_id).emit(room_id, user, message);
-            })
         }
         let ready1 = room[2];
         let ready2 = room[3];
-            
+        
         if (ready1 && ready2 && !room[5]) {
             let socket1 = room[0];
             let socket2 = room[1];
             let game = room[4];
             room[5] = true;
+
+            // Delete the room after 1 hour
+            setTimeout(() => {
+                delete rooms[room_id];
+            }, 3600000);
     
             if(Math.random() < 0.5) {
                 let temp_name = game.player1;
@@ -146,8 +143,16 @@ io.on('connection', socket =>{
             while(game.mainBoard.value === MARK.NONE && game.mainBoard.hasRoom()) {
                 socket1.emit('updateGame', Game.toJSON(game), true);
                 socket2.emit('updateGame', Game.toJSON(game), false);
-                address = await getAddress(socket1);
-                game.markTile(address);
+                
+                let marked = false;
+                while(!marked) {
+                    try{
+                        address = await getAddress(socket1);
+                        game.markTile(address);
+                        marked = true;
+                    }
+                    catch (error) {}
+                }
     
                 let temp_socket = socket1;
                 socket1 = socket2;

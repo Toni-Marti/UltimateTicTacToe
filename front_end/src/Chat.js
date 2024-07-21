@@ -30,7 +30,7 @@ function Chat({className, socket, roomId = 0, userName, password}) {
   const send = (e) => {
     e.preventDefault();
     console.log(roomId, userName, msg);
-    socket.emit(roomId, userName, msg);
+    socket.emit("message", roomId, userName, msg);
     setMsg('');
   };
 
