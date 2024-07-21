@@ -45,11 +45,6 @@ function App() {
   };
 
   useEffect(() => {
-  
-    socket.on('connect', () => {
-      console.log('Connected to server');
-    });
-
     socket.on('disconnect', () => {
       console.log('Disconnected from server');
       console.log('Supposedly trying to reconnect');
@@ -57,7 +52,6 @@ function App() {
   
     // Cleanup function to run when the component unmounts
     return () => {
-      socket.off('connect');
       socket.off('disconnect');
     };
   }, []);

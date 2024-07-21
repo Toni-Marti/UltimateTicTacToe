@@ -3,7 +3,9 @@
 
     /* This proprieties are overwitten in gameComponents.js */
     --player1_light_color: #50acf2;
+    --p1-lighter: #ceeaff;
     --player2_light_color: #f28585;
+    --p2-lighter: #ffdada;
 }
 
 .MainBoard {
@@ -47,8 +49,7 @@
 }
 
 .HoverPlayer1:hover {
-    background: var(--player1_light_color);
-    filter: opacity(0.4);
+    background: var(--p1-lighter);
 }
 
 .HoverPlayer2 {
@@ -56,8 +57,7 @@
 }
 
 .HoverPlayer2:hover {
-    background: var(--player2_light_color);
-    filter: opacity(0.4);
+    background: var(--p2-lighter);
 }
 
 .GridItem1 {

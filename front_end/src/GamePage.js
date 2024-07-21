@@ -6,7 +6,7 @@ import { PAGES } from './App.js';
 
 import './GamePage.css'
 
-function GamePage({socket, roomId}) {
+function GamePage({socket, userName, roomId}) {
     const [game, setGame] = useState(new Game());
     const [myTurn, setMyTurn] = useState(false);
 
@@ -21,7 +21,7 @@ function GamePage({socket, roomId}) {
     return(
         <div className="GamePage">
             <GameR game={game} isMyTyrn={myTurn} setLastMove={(move) => socket.emit("move", move)}/>
-            <Chat roomId={roomId} socket={socket}/>
+            <Chat roomId={roomId} userName={userName} socket={socket}/>
         </div>
     );
 }

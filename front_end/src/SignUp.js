@@ -15,27 +15,21 @@ function SignUp({socket, changePage, setUserName, setPassword}) {
     const send = (e) => {
         e.preventDefault();
         socket.emit('signUp',{un,pw,checkpw})
-    };
-    
-    useEffect(() => {
-        socket.on('signupSuccess', data => {
+        socket.once('signupSuccess', data => {
             console.log("Sing in: ", un, pw);
             setUserName(un);
             setPassword(pw);
             setMessage("Successfully signed in!")
             setChangePageAfterPopUp(true);
+            socket.off('signupFailed');
         });
-        socket.on('signupFailed', data => {
+        socket.once('signupFailed', data => {
             setPw("")
             setCheckPw("")
             setMessage(data.message)
-        });
-        return () => {
             socket.off('signupSuccess');
-            socket.off('signupFailed');
-        }
-    }, [un, pw]);
-    
+        });
+    };
 
     return(
         <div className='SignUp FormPage'>

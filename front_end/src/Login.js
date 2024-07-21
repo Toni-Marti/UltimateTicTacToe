@@ -14,26 +14,19 @@ function Login({socket, changePage, setUserName, setPassword}) {
 
     const send = (e) => {
         e.preventDefault()
-        socket.emit('login', {un, pw})
-    };
-    
-    
-    useEffect(() => {
-        socket.on('loginSuccess', data => {
+        socket.once('loginSuccess', data => {
             setUserName(un)
             setPassword(pw)
             setMessage(data.message)
             setChangePageAfterPopUp(true);
-        });
-        socket.on('loginFailed', data => {
-            setMessage(data.message)
-        });
-        //clean up socket listener when component unmounts
-        return () => {
-            socket.off('loginSuccess');
             socket.off('loginFailed');
-        };
-    },  [un, pw]);
+        });
+        socket.once('loginFailed', data => {
+            setMessage(data.message)
+            socket.off('loginSuccess');
+        });
+        socket.emit('login', {un, pw})
+    };
 
     return(
         <div className='Login FormPage'>

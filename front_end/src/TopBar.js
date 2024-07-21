@@ -18,8 +18,7 @@ function TopBar({changePage, userName, socket, setUserName, setPassword}) {
             <span id="userName">User: <User userName={userName} setPopUp={setPlayerPopUp} socket={socket} /></span>
             <span id="changeUser" onClick={() => changePage(PAGES.LOGIN)}>change user</span>
                 <Logout 
-                    socket={socket} 
-                    changePage={changePage} 
+                    socket={socket}
                     userName={userName}
                     setUserName={setUserName} 
                     setPassword={setPassword} 

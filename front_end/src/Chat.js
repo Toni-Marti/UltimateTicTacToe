@@ -29,6 +29,7 @@ function Chat({className, socket, roomId = 0, userName, password}) {
   // with its user name and send them to the server
   const send = (e) => {
     e.preventDefault();
+    console.log(roomId, userName, msg);
     socket.emit(roomId, userName, msg);
     setMsg('');
   };

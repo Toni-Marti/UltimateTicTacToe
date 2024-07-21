@@ -103,7 +103,7 @@ function BoardR({game, mark_function, hover_player, address = "", className = ""
     );
 }
 
-function GameR({isMyTyrn = true, is_online = false, game=new Game(), setLastMove=null}) {
+function GameR({isMyTyrn = true, game=new Game(), setLastMove=null}) {
     const [gameSt, setGameSt] = useState(game);
     const [isDebugMode, setIsDebugMode] = useState(false);
     const [colorRadio, setColorRadio] = useState("switching");

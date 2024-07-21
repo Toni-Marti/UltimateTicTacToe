@@ -253,6 +253,7 @@ class Rules {
 
     static clone(rules_instance) {
         let newRules = new Rules();
+        newRules.newLinesAlsoTeleport = rules_instance.newLinesAlsoTeleport;
         newRules.keepPlacingInBoardAfterItIsMarked = rules_instance.keepPlacingInBoardAfterItIsMarked;
         newRules.boardCanHaveMultipleMarks = rules_instance.boardCanHaveMultipleMarks;
 
@@ -288,7 +289,7 @@ class Game {
     }
 
     static clone(game_instance) {
-        let newGame = new Game(game_instance.mainBoard, game_instance.rules, game_instance.player1, game_instance.player2);
+        let newGame = new Game(game_instance.mainBoard, game_instance.player1, game_instance.player2, game_instance.rules);
         newGame.currentPlayer = game_instance.currentPlayer;
         newGame.nextMoveBoardAddress = game_instance.nextMoveBoardAddress;
 

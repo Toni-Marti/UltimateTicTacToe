@@ -34,12 +34,11 @@ io.on('connection', socket =>{
             forceLogout();
         }
         else {
-            console.log('Creating room for', username);
+            console.log('Creating room ', next_room,' for ', username);
             availableRooms[username] = [Board.fromJSON(board), socket];
             io.emit('newRoom', username, board);
 
             socket.on('disconnect', () => {
-                console.log('User disconnected:', username);
                 delete availableRooms[username];
                 io.emit('deleteRoom', username);
             })
@@ -48,7 +47,7 @@ io.on('connection', socket =>{
 
     //user action, must verify
     socket.on('listRooms', () => {
-        socket.emit('listRooms', Object.entries(availableRooms).map(([key, value]) => [key, value[0]]));
+        socket.emit('listRooms', Object.entries(availableRooms).map(([key, value]) => [key, Board.toJSON(value[0])]));
     })
 
     socket.on('joinRoom', (username, password, host_name) => {
@@ -78,11 +77,11 @@ io.on('connection', socket =>{
     });
 
     async function deleteMyRoom(username) {
-        console.log(username)
+        existed = availableRooms[username] !== undefined;
         delete availableRooms[username];
-        io.emit('deleteRoom', username);
-        console.log(`Deleted ${username}'s Room, if it existed...`);
-        
+        if (existed){
+            io.emit('deleteRoom', username);
+        }
     }
 
     //user action, must verify
@@ -106,21 +105,24 @@ io.on('connection', socket =>{
 
     //client action, must verify credentials
     socket.on('ready', async (room_id) => {
-        
-        io.on(room_id, (message) => {
-            io.emit(room_id, message);
-        })
-
         let room = rooms[room_id];
         if(room === undefined) {
             return;
         }
-    
+        
         if (room[0] === socket) {
             room[2] = true;
+            socket.join(room_id);
+            socket.on(room_id, (user, message) => {
+                io.to(room_id).emit(room_id, user, message);
+            })
         }
         else if (room[1] === socket) {
             room[3] = true;
+            socket.join(room_id);
+            socket.on(room_id, (user, message) => {
+                io.to(room_id).emit(room_id, user, message);
+            })
         }
         let ready1 = room[2];
         let ready2 = room[3];
@@ -142,8 +144,6 @@ io.on('connection', socket =>{
             }
     
             while(game.mainBoard.value === MARK.NONE && game.mainBoard.hasRoom()) {
-                console.log("playing")
-                    
                 socket1.emit('updateGame', Game.toJSON(game), true);
                 socket2.emit('updateGame', Game.toJSON(game), false);
                 address = await getAddress(socket1);
@@ -179,7 +179,6 @@ io.on('connection', socket =>{
                     'Content-Type': 'application/json'
                 }
             });
-            console.log("Response status:", response.status);
     
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -210,7 +209,6 @@ io.on('connection', socket =>{
                 const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
                 if (passwordMatch) {
                     verified = true
-                    console.log("User Verified")
                 }
             }
         }        
@@ -230,7 +228,6 @@ io.on('connection', socket =>{
     function logout(username){
         deleteMyRoom(username)
         message = 'Logged out.'
-        console.log(message)
         socket.emit('logout',{ message });
     }
     function handleDisconnection(socket, room_id) {
@@ -247,23 +244,14 @@ io.on('connection', socket =>{
 
     //handle user login
     socket.on('login', async (user) => {
-        console.log('Server received user:', user);
-
         let message = ""
         const verified = await verifyCredentials(user.un, user.pw)
         
         if (verified) {
             message = "Logged In! "
-            console.log(message)
             let users = await fetchUsers();
 
-            console.log(users)
-
-            console.log(user.un)
-
             let foundUser = users.find(u => u.username === user.un);
-            
-            console.log(foundUser)
 
             socket.emit('loginSuccess', {
                 id: foundUser.id,
@@ -274,7 +262,6 @@ io.on('connection', socket =>{
         } 
         else {
             message = 'Username or Password is incorrect.'
-            console.log(message)
             socket.emit('loginFailed',{ message });
         }
     })
@@ -346,19 +333,12 @@ io.on('connection', socket =>{
             message = "";
         }
         
-        console.log(message)
         return { validuser, validpass, message };
     }
 
     //signup
     socket.on('signUp', async (newuser) => {
-        console.log('Connected')
-
         let { validuser, validpass, message } =  await validCredentials(newuser.un, newuser.pw, newuser.checkpw)
-
-        console.log({validuser})
-        console.log({validpass})
-        console.log({message})
 
         if (validuser & validpass) {
             const users = await fetchUsers();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MessagePopUp, Overlay, TwoButtonPopUp } from "./popUps.js";
 import { PAGES } from './App.js';
 
-function Logout ({socket, changePage, userName, setUserName, setPassword}) {
+function Logout ({socket, userName, setUserName, setPassword}) {
     const [message, setMessage] = useState("");
     const [showLogoutConfirmPopup, setShowLogoutConfirmPopup] = useState(false);
     const [showLoggedOutPopup, setShowLoggedOutPopup] = useState(false);
@@ -16,11 +16,9 @@ function Logout ({socket, changePage, userName, setUserName, setPassword}) {
     };
     const clearLogoutConfirmation = () => {
         setShowLoggedOutPopup(false);
-        changePage(PAGES.LOGIN)
     };
     const clearLogoutWarning = () => {
         setForciblyLoggedoutPopup(false);
-        changePage(PAGES.LOGIN)
     };
 
     const clearLoginInfo = () => {
@@ -34,16 +32,22 @@ function Logout ({socket, changePage, userName, setUserName, setPassword}) {
         socket.emit('logout', userName);
     }
     
-    socket.on('forcelogout', data => {
-        clearLoginInfo();
-        setShowLogoutConfirmPopup(true);
-    });
+    useEffect(() => {
+        socket.on('forcelogout', data => {
+            clearLoginInfo();
+            setShowLogoutConfirmPopup(true);
+        });
+    
+        socket.on('logout', data => {
+            setShowLoggedOutPopup(true);
+            clearLoginInfo();
+        });
 
-    socket.on('logout', data => {
-        setShowLoggedOutPopup(true);
-        clearLoginInfo();
-    });
-
+        return () => {
+            socket.off('forcelogout');
+            socket.off('logout');
+        }
+    }, []);
 
 
     return (

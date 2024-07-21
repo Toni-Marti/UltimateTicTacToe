@@ -53,7 +53,7 @@ function Lobby({socket, changePage, userName, password, setGameRoom}) {
   function addRoom(owner, board_json) {
     let board = Board.fromJSON(board_json);
     if (owner === userName) {
-      setMyRoom(Board.fromJSON(board));
+      setMyRoom(board);
     }
     else {
       let newRooms = {...rooms};
@@ -144,7 +144,7 @@ function Lobby({socket, changePage, userName, password, setGameRoom}) {
               </button>}
             {Object.entries(rooms).map(([owner, board]) => (
               <button key={owner} className="Room" style={{display: 'flex', flexDirection:"column",  justifyContent: 'center', alignItems: 'center'}} onClick={() => setJoinMessage(() => joinMessagePopUp(owner))}>
-                <User userName={userName} setPopUp={setPlayerPopUp} size='xx-large' socket={socket}>{owner}</User>
+                <User userName={owner} setPopUp={setPlayerPopUp} size='xx-large' socket={socket}>{owner}</User>
                 <br/>
                 <div style={{width:"200px"}}>
                   <GameR isMyTyrn={false} game={new Game(board)}/>
