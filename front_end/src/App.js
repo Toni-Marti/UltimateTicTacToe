@@ -12,6 +12,8 @@ import LocalMode from './LocalMode';
 // import TestPage from './TestPage';
 import { getServerAddress, getServerPort} from './serverData.js'
 import TopBar from './TopBar.js';
+import handleLogout from './Logout';
+
 
 const PAGES = Object.freeze({
   LOBBY: 'Lobby',
@@ -40,14 +42,6 @@ function App() {
   const changePassword = (newPassword) => {
     localStorage.setItem('password', newPassword);
     setPassword(newPassword);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('username');
-    localStorage.removeItem('password');
-    setUserName('guest');
-    setPassword('');
-    setPage(PAGES.LOGIN);
   };
 
   useEffect(() => {
@@ -89,7 +83,13 @@ function App() {
 
   return (
     <div className='App'>
-      <TopBar changePage={setPage} userName={userName} socket={socket} handleLogout={handleLogout} /> 
+      <TopBar
+        changePage={setPage}
+        userName={userName}
+        socket={socket}
+        setUserName={setUserName} 
+        setPassword={setPassword} 
+        />
       {renderPage(page, socket)}
     </div>
   );

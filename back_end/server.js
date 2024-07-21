@@ -314,9 +314,11 @@ io.on('connection', socket =>{
             socket.emit('loginFailed',{ message });
         }
     })
-    
-    socket.on('logout', async (user) => {
-        socket.emit('logout', user);
+
+    socket.on('logout', async () => {
+        message = 'Logged out.'
+        console.log(message)
+        socket.emit('logout',{ message });
     })
 })
 
