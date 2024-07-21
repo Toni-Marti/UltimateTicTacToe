@@ -7,7 +7,7 @@ const io = require('socket.io')(server,{
 })
 
 // Key: [board, host_socket]
-let avialebleRooms = {}
+let availableRooms = {}
 
 // Key: [player1_socket, player2_socket, player1_ready, player2_ready, game]
 let rooms = {}
@@ -29,33 +29,33 @@ io.on('connection', socket =>{
 
     socket.on('createRoom', (username, password, board) => {
         console.log('Creating room for', username);
-        avialebleRooms[username] = [Board.fromJSON(board), socket];
+        availableRooms[username] = [Board.fromJSON(board), socket];
         io.emit('newRoom', username, board);
 
         socket.on('disconnect', () => {
             console.log('User disconnected:', username);
-            delete avialebleRooms[username];
+            delete availableRooms[username];
             io.emit('deleteRoom', username);
         })
     })
 
     socket.on('listRooms', () => {
-        socket.emit('listRooms', Object.entries(avialebleRooms).map(([key, value]) => [key, value[0]]));
+        socket.emit('listRooms', Object.entries(availableRooms).map(([key, value]) => [key, value[0]]));
     })
 
     socket.on('joinRoom', (username, password, host_name) => {
-        room = avialebleRooms[host_name];
+        room = availableRooms[host_name];
         board = room[0];
         host_socket = room[1];
         if (room !== undefined) {
             io.on(next_room, (mensage, username) => {
                 io.emit(next_room, mensage, username);
             })
-            rooms[next_room] = [socket, avialebleRooms[host_name][1], false, false, new Game(board, host_name, username), false];
+            rooms[next_room] = [socket, availableRooms[host_name][1], false, false, new Game(board, host_name, username), false];
             socket.emit('joinRoom', next_room);
             host_socket.emit('joinRoom', next_room);
             next_room++;
-            delete avialebleRooms[host_name];
+            delete availableRooms[host_name];
             io.emit('deleteRoom', host_name);
         }
         else {
@@ -64,7 +64,7 @@ io.on('connection', socket =>{
     })
 
     socket.on("deleteMyRoom", (username, password) => {
-        delete avialebleRooms[username];
+        delete availableRooms[username];
         io.emit('deleteRoom', username);
     })
 
