@@ -4,13 +4,16 @@ To run the aplication:
 
 `npm install`
 
-`npm start`
+`echo "{"users":[]}" >> db.json`
 
+`npx json-server ./db.json --port 9999 &`
+
+`npm start &`
 
 `cd ../front_end`
 
 `npm install`
 
-`npm start`
+`npm start &`
 
-Only install first time.
+Only do the installs first time.
