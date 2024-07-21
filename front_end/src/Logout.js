@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MessagePopUp, Overlay, TwoButtonPopUp } from "./popUps.js";
 import { PAGES } from './App.js';
 
-function Logout ({socket, changePage, setUserName, setPassword}) {
+function Logout ({socket, changePage, userName, setUserName, setPassword}) {
     const [message, setMessage] = useState("");
     const [showLogoutConfirmPopup, setShowLogoutConfirmPopup] = useState(false);
     const [showLoggedOutPopup, setShowLoggedOutPopup] = useState(false);
@@ -31,7 +31,7 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
     }
 
     function initiateLogout(){
-        socket.emit('logout');
+        socket.emit('logout', userName);
     }
     
     socket.on('forcelogout', data => {
@@ -52,7 +52,7 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
             {showLogoutConfirmPopup && <>
                 <Overlay />
                 <TwoButtonPopUp
-                    children="Are you sure you want to logout?"
+                    children="Are you sure you want to logout? "
                     negativeOnClick={cancelLogout}
                     positiveOnClick={confirmLogout}
                     negativeButtonText="No"

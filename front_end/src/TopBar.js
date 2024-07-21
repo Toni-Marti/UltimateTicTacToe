@@ -15,11 +15,12 @@ function TopBar({changePage, userName, socket, setUserName, setPassword}) {
         <div id="TopBar">
             <span id="title" onClick={() => changePage(PAGES.LOBBY)}>ULTIMATE-ULTIMATE TIC-TAC-TOE</span>
             <div id="userPart">
-                <span id="userName">User: <User setPopUp={setPlayerPopUp} socket={socket}>{userName}</User></span>
-                <span id="changeUser" onClick={() => changePage(PAGES.LOGIN)}>change user</span>
+            <span id="userName">User: <User userName={userName} setPopUp={setPlayerPopUp} socket={socket} /></span>
+            <span id="changeUser" onClick={() => changePage(PAGES.LOGIN)}>change user</span>
                 <Logout 
                     socket={socket} 
                     changePage={changePage} 
+                    userName={userName}
                     setUserName={setUserName} 
                     setPassword={setPassword} 
                 />

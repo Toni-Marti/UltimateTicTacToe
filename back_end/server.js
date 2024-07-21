@@ -27,45 +27,73 @@ io.on('connection', socket =>{
         io.emit(0, user, mesage);
     })
 
+    //user action, must verify
     socket.on('createRoom', (username, password, board) => {
-        console.log('Creating room for', username);
-        availableRooms[username] = [Board.fromJSON(board), socket];
-        io.emit('newRoom', username, board);
+        let userVerified = verifyCredentials(username, password)
+        if (!userVerified){
+            forceLogout();
+        }
+        else {
+            console.log('Creating room for', username);
+            availableRooms[username] = [Board.fromJSON(board), socket];
+            io.emit('newRoom', username, board);
 
-        socket.on('disconnect', () => {
-            console.log('User disconnected:', username);
-            delete availableRooms[username];
-            io.emit('deleteRoom', username);
-        })
+            socket.on('disconnect', () => {
+                console.log('User disconnected:', username);
+                delete availableRooms[username];
+                io.emit('deleteRoom', username);
+            })
+        }
     })
 
+    //user action, must verify
     socket.on('listRooms', () => {
         socket.emit('listRooms', Object.entries(availableRooms).map(([key, value]) => [key, value[0]]));
     })
 
     socket.on('joinRoom', (username, password, host_name) => {
-        room = availableRooms[host_name];
-        board = room[0];
-        host_socket = room[1];
-        if (room !== undefined) {
-            io.on(next_room, (mensage, username) => {
-                io.emit(next_room, mensage, username);
-            })
-            rooms[next_room] = [socket, availableRooms[host_name][1], false, false, new Game(board, host_name, username), false];
-            socket.emit('joinRoom', next_room);
-            host_socket.emit('joinRoom', next_room);
-            next_room++;
-            delete availableRooms[host_name];
-            io.emit('deleteRoom', host_name);
-        }
-        else {
-            socket.emit('joinRoom', false)
-        }
-    })
+        let userVerified = verifyCredentials(username, password);
+        if (!userVerified) {
+            forceLogout();
+        } else {
+            let room = availableRooms[host_name];
+            if (room !== undefined) {
+                let board = room[0];
+                let host_socket = room[1];
 
-    socket.on("deleteMyRoom", (username, password) => {
+                rooms[next_room] = [socket, host_socket, false, false, new Game(board, host_name, username), false];
+                socket.emit('joinRoom', next_room);
+                host_socket.emit('joinRoom', next_room);
+
+                socket.on('disconnect', () => handleDisconnection(socket, next_room));
+                host_socket.on('disconnect', () => handleDisconnection(host_socket, next_room));
+
+                next_room++;
+                delete availableRooms[host_name];
+                io.emit('deleteRoom', host_name);
+            } else {
+                socket.emit('joinRoom', false);
+            }
+        }
+    });
+
+    async function deleteMyRoom(username) {
+        console.log(username)
         delete availableRooms[username];
         io.emit('deleteRoom', username);
+        console.log(`Deleted ${username}'s Room, if it existed...`);
+        
+    }
+
+    //user action, must verify
+    socket.on('deleteMyRoom', (userName, password) => {
+        let userVerified = verifyCredentials(userName, password)
+        if (!userVerified){
+            forceLogout();
+        }
+        else{
+            deleteMyRoom(userName)
+        }
     })
 
     async function getAddress(socket) {
@@ -76,7 +104,9 @@ io.on('connection', socket =>{
         })
     }
 
+    //client action, must verify credentials
     socket.on('ready', async (room_id) => {
+        
         io.on(room_id, (message) => {
             io.emit(room_id, message);
         })
@@ -85,7 +115,7 @@ io.on('connection', socket =>{
         if(room === undefined) {
             return;
         }
-
+    
         if (room[0] === socket) {
             room[2] = true;
         }
@@ -94,13 +124,13 @@ io.on('connection', socket =>{
         }
         let ready1 = room[2];
         let ready2 = room[3];
-        
+            
         if (ready1 && ready2 && !room[5]) {
             let socket1 = room[0];
             let socket2 = room[1];
             let game = room[4];
             room[5] = true;
-
+    
             if(Math.random() < 0.5) {
                 let temp_name = game.player1;
                 game.player1 = game.player2;
@@ -110,27 +140,33 @@ io.on('connection', socket =>{
                 socket1 = socket2;
                 socket2 = temp_socket;
             }
-
+    
             while(game.mainBoard.value === MARK.NONE && game.mainBoard.hasRoom()) {
                 console.log("playing")
-                
+                    
                 socket1.emit('updateGame', Game.toJSON(game), true);
                 socket2.emit('updateGame', Game.toJSON(game), false);
                 address = await getAddress(socket1);
                 game.markTile(address);
-
+    
                 let temp_socket = socket1;
                 socket1 = socket2;
                 socket2 = temp_socket;
             }
         }
+
     })
 
-    socket.on('userStats', async (username) => {
-        let users = await fetchUsers();
-        if (users.some(u => u.username === username)) {
-            const thisuser = users.find(u => u.username === username);
-            socket.emit('userStats', thisuser.gameStats);
+    socket.on('userStats', async (userName, password) => {
+        let userVerified = verifyCredentials(userName, password);
+        if (!userVerified) {
+            forceLogout();
+        } else {
+            let users = await fetchUsers();
+            let thisuser = users.find(u => u.username === userName);
+            if (thisuser) {
+                socket.emit('userStats', thisuser.gameStats);
+            }
         }
     })
 
@@ -161,18 +197,23 @@ io.on('connection', socket =>{
     //verify logged in user exists
     async function verifyCredentials(un, pw) {
         let verified = false
-        let users = await fetchUsers();
-        hashedPassword = await hashPassword(pw)
-        foundUser = users.some(u => u.username === un)
-
-        if (foundUser) {
-            const thisuser = users.find(u => u.username === un);
-            const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
-            if (passwordMatch) {
-                verified = true
-            }
+        if (un === 'guest'){
+            verified = true
         }
-        
+        else {
+            let users = await fetchUsers();
+            hashedPassword = await hashPassword(pw)
+            foundUser = users.some(u => u.username === un)
+    
+            if (foundUser) {
+                const thisuser = users.find(u => u.username === un);
+                const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
+                if (passwordMatch) {
+                    verified = true
+                    console.log("User Verified")
+                }
+            }
+        }        
         return verified;        
     }
     async function forceLogout(){
@@ -182,11 +223,12 @@ io.on('connection', socket =>{
 
 
     //logout logic
-    socket.on('logout', async () => {
-        logout();
+    socket.on('logout', async (data) => {
+        logout(data.userName);
     })
 
-    function logout(){
+    function logout(username){
+        deleteMyRoom(username)
         message = 'Logged out.'
         console.log(message)
         socket.emit('logout',{ message });
@@ -231,7 +273,7 @@ io.on('connection', socket =>{
 
 
 
-    //account creation: verify valid user info input
+    //account creation logic: verify valid user info input
     async function validCredentials(un, pw, checkpw) {
         let message = "";
         let validpass = false;

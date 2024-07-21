@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MessagePopUp, Overlay } from './popUps.js';
 import Stadistics from './Stadistics.js'
 
-function User({children, socket, size="", setPopUp}) {
+function User({userName, password, socket, size="", setPopUp}) {
   const [stats, setStats] = useState(null);
 
   function updatePopUp (losses, ties, wins) {
@@ -11,7 +11,7 @@ function User({children, socket, size="", setPopUp}) {
             <Overlay/>
             <MessagePopUp onClick={() => setPopUp(null)}>
                 <div style={{color:'black'}}>
-                    <span style={{fontWeight:"bolder", fontSize:"xx-large"}}> {children} </span>
+                    <span style={{fontWeight:"bolder", fontSize:"xx-large"}}> {userName} </span>
                     <br/>
                     <Stadistics loss={losses} draw={ties} win={wins}/>
                 </div>
@@ -26,7 +26,7 @@ function User({children, socket, size="", setPopUp}) {
             setStats(gameStats);
             updatePopUp(gameStats.losses, gameStats.ties, gameStats.wins)
         })
-        socket.emit('userStats', children);
+        socket.emit('userStats', (userName, password));
     }
     else {
         updatePopUp(stats.losses, stats.ties, stats.wins)
@@ -34,7 +34,7 @@ function User({children, socket, size="", setPopUp}) {
   };
 
   return (
-    <span onClick={updateStats} style={{fontWeight:'bold', cursor:'pointer', fontSize:size}}>{children}</span>
+    <span onClick={updateStats} style={{fontWeight:'bold', cursor:'pointer', fontSize:size}}>{userName}</span>
   );
 }
 

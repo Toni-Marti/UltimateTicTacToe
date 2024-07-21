@@ -94,7 +94,7 @@ function Lobby({socket, changePage, userName, password, setGameRoom}) {
         )
       }
       else {
-        socket.emit('deleteMyRoom', userName, password);
+        socket.emit('deleteMyRoom', { userName, password });
         setGameRoom(room);
         changePage(PAGES.GAMEPAGE);
       }
@@ -105,7 +105,7 @@ function Lobby({socket, changePage, userName, password, setGameRoom}) {
   const joinMessagePopUp = (owner) =>
   <div>
     <Overlay/>
-    <TwoButtonPopUp negativeOnClick={() => setJoinMessage(null)} positiveOnClick={() => joinPopUpYes(owner)} className='message-box'>Play againsst  {owner}?</TwoButtonPopUp>
+    <TwoButtonPopUp negativeOnClick={() => setJoinMessage(null)} positiveOnClick={() => joinPopUpYes(owner)} className='message-box'>Play against  {owner}?</TwoButtonPopUp>
   </div>;
 
   const closeMyRoomPopUp =
@@ -136,7 +136,7 @@ function Lobby({socket, changePage, userName, password, setGameRoom}) {
           <div className="RoomList">
             {myRoom !== null && 
               <button key={userName} id="myRoom" className="Room" style={{display: 'flex', flexDirection:"column",  justifyContent: 'center', alignItems: 'center'}} onClick={() => setCloseMyRoom(closeMyRoomPopUp)}>
-                <User setPopUp={setPlayerPopUp} size='xx-large' socket={socket}>{userName}</User>
+                <User userName={userName} setPopUp={setPlayerPopUp} size='xx-large' socket={socket}>{userName}</User>
                 <br/>
                 <div style={{width:"200px"}}>
                   <GameR isMyTyrn={false} game={new Game(myRoom)}/>
@@ -144,7 +144,7 @@ function Lobby({socket, changePage, userName, password, setGameRoom}) {
               </button>}
             {Object.entries(rooms).map(([owner, board]) => (
               <button key={owner} className="Room" style={{display: 'flex', flexDirection:"column",  justifyContent: 'center', alignItems: 'center'}} onClick={() => setJoinMessage(() => joinMessagePopUp(owner))}>
-                <User setPopUp={setPlayerPopUp} size='xx-large' socket={socket}>{owner}</User>
+                <User userName={userName} setPopUp={setPlayerPopUp} size='xx-large' socket={socket}>{owner}</User>
                 <br/>
                 <div style={{width:"200px"}}>
                   <GameR isMyTyrn={false} game={new Game(board)}/>
