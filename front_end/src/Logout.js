@@ -16,9 +16,11 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
     };
     const clearLogoutConfirmation = () => {
         setShowLoggedOutPopup(false);
+        changePage(PAGES.LOGIN)
     };
     const clearLogoutWarning = () => {
         setForciblyLoggedoutPopup(false);
+        changePage(PAGES.LOGIN)
     };
 
     const clearLoginInfo = () => {
