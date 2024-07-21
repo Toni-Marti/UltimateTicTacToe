@@ -3,23 +3,23 @@ import { MessagePopUp, Overlay, TwoButtonPopUp } from "./popUps.js";
 import { PAGES } from './App.js';
 
 function Logout ({socket, changePage, setUserName, setPassword}) {
-    const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-    const [forciblyLoggedoutPopup, setforciblyLoggedoutPopup] = useState(false);
+    const [message, setMessage] = useState("");
+    const [showLogoutConfirmPopup, setShowLogoutConfirmPopup] = useState(false);
+    const [showLoggedOutPopup, setShowLoggedOutPopup] = useState(false);
+    const [forciblyLoggedoutPopup, setForciblyLoggedoutPopup] = useState(false);
     const confirmLogout = () => {
-        setShowLogoutPopup(false);
+        setShowLogoutConfirmPopup(false);
         initiateLogout();
     };
     const cancelLogout = () => {
-        setShowLogoutPopup(false);
+        setShowLogoutConfirmPopup(false);
+    };
+    const clearLogoutConfirmation = () => {
+        setShowLoggedOutPopup(false);
     };
     const clearLogoutWarning = () => {
-        setShowLogoutPopup(false);
+        setForciblyLoggedoutPopup(false);
     };
-    function initiateLogout(){
-        socket.emit('logout');
-    }
-
-
 
     const clearLoginInfo = () => {
         localStorage.removeItem('username');
@@ -28,22 +28,27 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
         setPassword('');
     }
 
+    function initiateLogout(){
+        socket.emit('logout');
+    }
+    
+
     socket.on('forcelogout', data => {
         clearLoginInfo();
-        setShowLogoutPopup(true);
+        setShowLogoutConfirmPopup(true);
     });
 
     socket.on('logout', data => {
-        console.log(data.message)
+        setShowLoggedOutPopup(true);
         clearLoginInfo();
     });
 
 
-    
+
     return (
         <div id="Logout">
-            <span id="logout" onClick={() => setShowLogoutPopup(true)}>logout</span>
-            {showLogoutPopup && <>
+            <span id="logout" onClick={() => setShowLogoutConfirmPopup(true)}>logout</span>
+            {showLogoutConfirmPopup && <>
                 <Overlay />
                 <TwoButtonPopUp
                     children="Are you sure you want to logout?"
@@ -51,6 +56,14 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
                     positiveOnClick={confirmLogout}
                     negativeButtonText="No"
                     positiveButtonText="Yes"
+                />
+            </>}
+            {showLoggedOutPopup && <>
+                <Overlay />
+                <MessagePopUp
+                    children="You have successfully logged out. "
+                    buttonText={"OK"}
+                    onClick={clearLogoutConfirmation}
                 />
             </>}
             {forciblyLoggedoutPopup && <>
