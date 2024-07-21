@@ -32,7 +32,6 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
         socket.emit('logout');
     }
     
-
     socket.on('forcelogout', data => {
         clearLoginInfo();
         setShowLogoutConfirmPopup(true);

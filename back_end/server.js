@@ -175,12 +175,13 @@ io.on('connection', socket =>{
         
         return verified;        
     }
-
     async function forceLogout(){
         socket.emit('forceLogout',{ message });
         logout();
     }
 
+
+    //logout logic
     socket.on('logout', async () => {
         logout();
     })
@@ -238,12 +239,12 @@ io.on('connection', socket =>{
         let users = await fetchUsers();
         let foundUser = users.some(user => user.username === un);
         
-        let lenghtReqs = un.length >= 3 && un.length <= 20
+        let lengthReqs = un.length >= 3 && un.length <= 20
         let usernameCharOK = /^[a-zA-Z0-9_.]+$/.test(un)
         let usernameNotGuest = un !== "guest"
 
         // Check username
-        if (lenghtReqs && usernameCharOK && usernameNotGuest && !foundUser) {
+        if (lengthReqs && usernameCharOK && usernameNotGuest && !foundUser) {
             validuser = true;
         } else {
             message = "Username is invalid. ";
