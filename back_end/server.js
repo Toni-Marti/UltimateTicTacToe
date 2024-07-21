@@ -48,7 +48,9 @@ io.on('connection', socket =>{
         board = room[0];
         host_socket = room[1];
         if (room !== undefined) {
-            avialebleRooms[host_name][1].emit('playerJoined');
+            io.on(next_room, (mensage, username) => {
+                io.emit(next_room, mensage, username);
+            })
             rooms[next_room] = [socket, avialebleRooms[host_name][1], false, false, new Game(board, host_name, username), false];
             socket.emit('joinRoom', next_room);
             host_socket.emit('joinRoom', next_room);
