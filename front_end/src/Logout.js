@@ -5,36 +5,41 @@ import { PAGES } from './App.js';
 function Logout ({socket, changePage, setUserName, setPassword}) {
     const [showLogoutPopup, setShowLogoutPopup] = useState(false);
     const [forciblyLoggedoutPopup, setforciblyLoggedoutPopup] = useState(false);
-    
-    function handleLogout(){
-        socket.emit('logout');
-    }
-
     const confirmLogout = () => {
         setShowLogoutPopup(false);
-        handleLogout();
+        initiateLogout();
     };
-
     const cancelLogout = () => {
         setShowLogoutPopup(false);
     };
-
     const clearLogoutWarning = () => {
         setShowLogoutPopup(false);
     };
+    function initiateLogout(){
+        socket.emit('logout');
+    }
 
-    socket.on('logout', data => {
-        console.log(data.message)
+
+
+    const clearLoginInfo = () => {
         localStorage.removeItem('username');
         localStorage.removeItem('password');
         setUserName('guest');
         setPassword('');
-    });
+    }
 
     socket.on('forcelogout', data => {
+        clearLoginInfo();
         setShowLogoutPopup(true);
     });
 
+    socket.on('logout', data => {
+        console.log(data.message)
+        clearLoginInfo();
+    });
+
+
+    
     return (
         <div id="Logout">
             <span id="logout" onClick={() => setShowLogoutPopup(true)}>logout</span>
