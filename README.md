@@ -4,7 +4,7 @@ To run the aplication:
 
 `npm install`
 
-`echo "{"users":[]}" >> db.json`
+`echo "{\"users\":[]}" >> db.json`
 
 `npx json-server ./db.json --port 9999 &`
 
