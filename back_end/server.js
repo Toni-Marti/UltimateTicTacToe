@@ -135,9 +135,7 @@ io.on('connection', socket =>{
         }
     })
 
-    socket.on('logout', async (user) => {
-        socket.emit('logout', user);
-    })
+    
 
 
 
@@ -316,7 +314,13 @@ io.on('connection', socket =>{
             socket.emit('loginFailed',{ message });
         }
     })
+    
+    socket.on('logout', async (user) => {
+        socket.emit('logout', user);
+    })
 })
+
+
 
 
 // The server listens on port 4000
