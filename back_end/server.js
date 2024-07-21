@@ -27,25 +27,6 @@ io.on('connection', socket =>{
         io.emit(0, user, mesage);
     })
 
-
-    //verify logged in user exists
-    async function verifyCredentials(un, pw) {
-        let verified = false
-        let users = await fetchUsers();
-        hashedPassword = await hashPassword(pw)
-        foundUser = users.some(u => u.username === un)
-
-        if (foundUser) {
-            const thisuser = users.find(u => u.username === un);
-            const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
-            if (passwordMatch) {
-                verified = true
-            }
-        }
-        
-        return verified;        
-    }
-
     socket.on('createRoom', (username, password, board) => {
         console.log('Creating room for', username);
         availableRooms[username] = [Board.fromJSON(board), socket];
@@ -176,6 +157,78 @@ io.on('connection', socket =>{
         }
         return users;
     }
+    
+    //verify logged in user exists
+    async function verifyCredentials(un, pw) {
+        let verified = false
+        let users = await fetchUsers();
+        hashedPassword = await hashPassword(pw)
+        foundUser = users.some(u => u.username === un)
+
+        if (foundUser) {
+            const thisuser = users.find(u => u.username === un);
+            const passwordMatch = await bcrypt.compare(pw, thisuser.password); // Compare the passwords
+            if (passwordMatch) {
+                verified = true
+            }
+        }
+        
+        return verified;        
+    }
+
+    async function forceLogout(){
+        socket.emit('forceLogout',{ message });
+        logout();
+    }
+
+    socket.on('logout', async () => {
+        logout();
+    })
+
+    function logout(){
+        message = 'Logged out.'
+        console.log(message)
+        socket.emit('logout',{ message });
+    }
+
+
+
+    //handle user login
+    socket.on('login', async (user) => {
+        console.log('Server received user:', user);
+
+        let message = ""
+        const verified = await verifyCredentials(user.un, user.pw)
+        
+        if (verified) {
+            message = "Logged In! "
+            console.log(message)
+            let users = await fetchUsers();
+
+            console.log(users)
+
+            console.log(user.un)
+
+            let foundUser = users.find(u => u.username === user.un);
+            
+            console.log(foundUser)
+
+            socket.emit('loginSuccess', {
+                id: foundUser.id,
+                username: foundUser.username,
+                gameStats: foundUser.gameStats,
+                message: message,
+            });
+        } 
+        else {
+            message = 'Username or Password is incorrect.'
+            console.log(message)
+            socket.emit('loginFailed',{ message });
+        }
+    })
+
+
+
 
     //account creation: verify valid user info input
     async function validCredentials(un, pw, checkpw) {
@@ -184,16 +237,27 @@ io.on('connection', socket =>{
         let validuser = false;
         let users = await fetchUsers();
         let foundUser = users.some(user => user.username === un);
-    
+        
+        let lenghtReqs = un.length >= 3 && un.length <= 20
+        let usernameCharOK = /^[a-zA-Z0-9_.]+$/.test(un)
+        let usernameNotGuest = un !== "guest"
+
         // Check username
-        if (un.length >= 3 && un.length <= 20 && /^[a-zA-Z0-9_.]+$/.test(un) && !foundUser) {
+        if (lenghtReqs && usernameCharOK && usernameNotGuest && !foundUser) {
             validuser = true;
         } else {
-            message = message + "Username is invalid. "
+            message = "Username is invalid. ";
+            if (!lengthReqs) {
+                message += "Username must be 3-20 characters long. ";
+            }
+            if (!usernameCharOK) {
+                message += "Username can only contain alphanumeric characters, underscores, and periods. ";
+            }
+            if (!usernameNotGuest) {
+                message += "Username cannot be \"guest\". ";
+            }
             if (foundUser) {
-                message = message + "Username is already taken. ";
-            } else {
-                message = message + "Username must be 3-20 characters long and can only contain alphanumeric characters, underscores, and periods. ";
+                message += "Username is already taken. ";
             }
         }
         
@@ -275,45 +339,6 @@ io.on('connection', socket =>{
         
     })
 
-    // Handle user login
-    socket.on('login', async (user) => {
-        console.log('Server received user:', user);
-
-        let message = ""
-        const verified = await verifyCredentials(user.un, user.pw)
-        
-        if (verified) {
-            message = "Logged In! "
-            console.log(message)
-            let users = await fetchUsers();
-
-            console.log(users)
-
-            console.log(user.un)
-
-            let foundUser = users.find(u => u.username === user.un);
-            
-            console.log(foundUser)
-
-            socket.emit('loginSuccess', {
-                id: foundUser.id,
-                username: foundUser.username,
-                gameStats: foundUser.gameStats,
-                message: message,
-            });
-        } 
-        else {
-            message = 'Username or Password is incorrect.'
-            console.log(message)
-            socket.emit('loginFailed',{ message });
-        }
-    })
-
-    socket.on('logout', async () => {
-        message = 'Logged out.'
-        console.log(message)
-        socket.emit('logout',{ message });
-    })
 })
 
 
