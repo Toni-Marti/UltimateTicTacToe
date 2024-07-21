@@ -30,15 +30,15 @@ function Logout ({socket, changePage, setUserName, setPassword}) {
             <span id="logout" onClick={() => setShowLogoutPopup(true)}>logout</span>
             
             {showLogoutPopup && <>
-    <Overlay />
-    <TwoButtonPopUp
-        children="Are you sure you want to logout?"
-        negativeOnClick={cancelLogout}
-        positiveOnClick={confirmLogout}
-        negativeButtonText="No"
-        positiveButtonText="Yes"
-    />
-</>}
+                <Overlay />
+                <TwoButtonPopUp
+                    children="Are you sure you want to logout?"
+                    negativeOnClick={cancelLogout}
+                    positiveOnClick={confirmLogout}
+                    negativeButtonText="No"
+                    positiveButtonText="Yes"
+                />
+            </>}
         </div>
     );
 };
