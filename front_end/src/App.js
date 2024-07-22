@@ -9,7 +9,7 @@ import Lobby from './Lobby';
 import Login from './Login';
 import SignUp from './SignUp';
 import LocalMode from './LocalMode';
-// import TestPage from './TestPage';
+import TestPage from './TestPage';
 import { getServerAddress, getServerPort} from './serverData.js'
 import TopBar from './TopBar.js';
 import handleLogout from './Logout';
@@ -68,8 +68,8 @@ function App() {
         return <GamePage socket={socket} changePage={setPage} userName={userName} password={password} roomId={gameRoom}/>;
       case PAGES.LOCALMODE:
         return <LocalMode changePage={setPage}/>;
-        // case PAGES.TEST:
-      //   return <TestPage socket={socket}/>;
+        case PAGES.TEST:
+        return <TestPage socket={socket}/>;
       default:
         return null; // or a default page
     }
