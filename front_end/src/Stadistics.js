@@ -16,15 +16,15 @@ const Stadistics = ({ loss, draw, win }) => {
           TOTAL GAMES: {total}
         </span>
       </div>
-      <div className='Bar' style={{gridTemplateColumns: loss + "fr " + draw + "fr " + win + "fr " }}>
-          <div className='Loss'></div>
-          <div className='Draw'></div>
+      <div className='Bar' style={{gridTemplateColumns: win + "fr " + draw + "fr " + loss + "fr " }}>
           <div className='Win'></div>
+          <div className='Draw'></div>
+          <div className='Loss'></div>
       </div>
-      <div className='Bar_NoBorder' style={{gridTemplateColumns: loss + "fr " + draw + "fr " + win + "fr " }}>
-          <span className='LossPercentage'>{lossPercentage}%</span>
-          <span className='DrawPercentage'>{drawPercentage}%</span>
+      <div className='Bar_NoBorder' style={{gridTemplateColumns: win + "fr " + draw + "fr " + loss + "fr " }}>
           <span className='WinPercentage'>{winPercentage}%</span>
+          <span className='DrawPercentage'>{drawPercentage}%</span>
+          <span className='LossPercentage'>{lossPercentage}%</span>
       </div>
     </div>
   );

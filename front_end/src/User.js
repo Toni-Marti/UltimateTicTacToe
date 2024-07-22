@@ -5,6 +5,8 @@ import Stadistics from './Stadistics.js'
 function User({userName, password, socket, size="", setPopUp}) {
   const [stats, setStats] = useState(null);
 
+  
+
   function updatePopUp (losses, ties, wins) {
     setPopUp(
         <>
@@ -20,13 +22,14 @@ function User({userName, password, socket, size="", setPopUp}) {
     )
   }
 
-  function updateStats () {
+  function updateStats (event) {
+    event.stopPropagation();
     if(stats === null) {
         socket.once('userStats', (gameStats) => {
             setStats(gameStats);
             updatePopUp(gameStats.losses, gameStats.ties, gameStats.wins)
         })
-        socket.emit('userStats', (userName, password));
+        socket.emit('userStats', userName);
     }
     else {
         updatePopUp(stats.losses, stats.ties, stats.wins)

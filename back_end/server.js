@@ -162,16 +162,11 @@ io.on('connection', socket =>{
 
     })
 
-    socket.on('userStats', async (userName, password) => {
-        let userVerified = verifyCredentials(userName, password);
-        if (!userVerified) {
-            forceLogout();
-        } else {
-            let users = await fetchUsers();
-            let thisuser = users.find(u => u.username === userName);
-            if (thisuser) {
-                socket.emit('userStats', thisuser.gameStats);
-            }
+    socket.on('userStats', async (userName) => {
+        let users = await fetchUsers();
+        let thisuser = users.find(u => u.username === userName);
+        if (thisuser) {
+            socket.emit('userStats', thisuser.gameStats);
         }
     })
 
